@@ -23,11 +23,15 @@ async def search(query : str, media_type : Mediatype = Mediatype.movie):
     else:
         result = search_tv(query)
     return result
-#@app.get("/favourites")   
+@app.get("/favourites")   
 
 @app.get("/watchlist")
 async def display_watchlist():
     pass
-#@app.post("/watchlist")
 
-#@app.put("/watchlist{id}")
+@app.post("/watchlist")
+async def add_to_watchlist():
+    pass
+@app.put("/watchlist/{id}")
+async def edit_watchlist():
+    pass

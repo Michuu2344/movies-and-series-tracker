@@ -4,10 +4,10 @@ def create_watchlist():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
     cur.execute('''CREATE TABLE IF NOT EXISTS watchlist(
-                id INT SERIAL PRIMARY KEY,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id TEXT NOT NULL,
                 tmbd_id TEXT NOT NULL,
-                media type TEXT NOT NULL,
+                media_type TEXT ,
                 status TEXT NOT NULL,
                 rating TEXT,
                 added_at TEXT);''')
@@ -23,5 +23,3 @@ def create_user_db():
                 hashed_password TEXT)''')
     conn.commit()
     conn.close()
-create_watchlist()
-create_user_db()
