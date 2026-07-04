@@ -13,8 +13,8 @@ class User(BaseModel):
     username : str
     email: str
     full_name : str
+class UserInDB(User):
     hashed_password : str
-
 class Mediatype(str,Enum):
     movie = "movie"
     tv = "tv"
@@ -24,5 +24,7 @@ class Status(str,Enum):
     want_to_watch = "want_to_watch"
     dropped = "dropped"
     favourite = "favourite"
-    
-    watching, completed, want_to_watch, dropped, favourite
+class WatchListItem(BaseModel):
+    tmbd_id : int
+    media_type : Mediatype
+    status : Status
