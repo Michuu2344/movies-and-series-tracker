@@ -6,17 +6,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
-def get_details_tv(tmbd_id : int):
+def get_details_tv(tmdb_id : int):
     headers = {
         "accept": "application/json",
         "Authorization": f"Bearer {API_KEY}"
 
     }  
-    url2 = f"https://api.themoviedb.org/3/tv/{tmbd_id}"
+    url2 = f"https://api.themoviedb.org/3/tv/{tmdb_id}"
     data2 = requests.get(url2,headers=headers) 
     response2 = data2.json()
 
-    url3 = f"https://api.themoviedb.org/3/tv/{tmbd_id}/credits"
+    url3 = f"https://api.themoviedb.org/3/tv/{tmdb_id}/credits"
     data3 = requests.get(url3,headers=headers)
     cast = data3.json()
     poster_path = response2['poster_path']
@@ -40,15 +40,15 @@ def get_details_tv(tmbd_id : int):
             "poster": poster_url 
             }
     
-def get_details_movie(tmbd_id : int):
+def get_details_movie(tmdb_id : int):
     headers = {
         "accept" : "application/json",
         "Authorization": f"Bearer {API_KEY}"
     }
-    url2 = f"https://api.themoviedb.org/3/movie/{tmbd_id}"    
+    url2 = f"https://api.themoviedb.org/3/movie/{tmdb_id}"    
     data2 = requests.get(url2,headers=headers)
     response2 = data2.json()
-    url3 = f"https://api.themoviedb.org/3/movie/{tmbd_id}/credits"
+    url3 = f"https://api.themoviedb.org/3/movie/{tmdb_id}/credits"
     data3 = requests.get(url3,headers=headers)
     cast = data3.json()
     people = []
@@ -63,7 +63,7 @@ def get_details_movie(tmbd_id : int):
     poster_path = response2['poster_path']
     
     poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}"
-    return {"tmbd_id": id,
+    return {"tmdb_id": id,
             "name": (response2['title']),
             "release_date":(response2['release_date']),
             "overview":(response2['overview']),
@@ -73,7 +73,7 @@ def get_details_movie(tmbd_id : int):
             "poster": poster_url 
             }
 def search_movie(query : str):
-    url = f"https://api.themoviedb.org/3/search/movie?query={query}&include_adult=false"
+    url = f"https://api.themoviedb.org/3/search/tv?query={query}&include_adult=false"
     headers = {
         "accept" : "application/json",
         "Authorization": f"Bearer {API_KEY}"
@@ -83,7 +83,7 @@ def search_movie(query : str):
     results = []
     for movie in response['results']:
         results.append({
-            "tmbd_id":movie['id'],
+            "tmdb_id":movie['id'],
             "title":movie['title'],
             "release_date":movie['release_date'],
             "overview":movie['overview'] 
@@ -100,7 +100,7 @@ def search_tv(query : str):
     results = []
     for tv in response['results']:
         results.append({
-            "tmbd_id":tv['id'],
+            "tmdb_id":tv['id'],
             "title":tv['name'],
             "release_date":tv['first_air_date'],
             "overview":tv['overview'] 

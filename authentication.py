@@ -30,7 +30,7 @@ password_hash = PasswordHash.recommended()
 
 DUMMY_HASH = password_hash.hash(DUMMY_PASSWORD)
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 def verify_password(plain_password,hashed_password):
     return password_hash.verify(plain_password,hashed_password)

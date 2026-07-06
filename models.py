@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,Field
 from typing import Optional
 from enum import Enum
 class UserRegister(BaseModel):
@@ -6,8 +6,6 @@ class UserRegister(BaseModel):
     email:str
     full_name:str
     password : str
-
-
 class User(BaseModel):
     id : int
     username : str
@@ -25,6 +23,10 @@ class Status(str,Enum):
     dropped = "dropped"
     favourite = "favourite"
 class WatchListItem(BaseModel):
-    tmbd_id : int
+    tmdb_id : int
     media_type : Mediatype
     status : Status
+    rating: Optional[int] = Field(None,ge=1,le=10)
+class EditWatchListItem(BaseModel):
+    status : Optional[Status] = None
+    rating: Optional[int] = None
