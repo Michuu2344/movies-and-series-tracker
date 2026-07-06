@@ -61,7 +61,7 @@ async def display_watchlist(user : Annotated[User,Depends(get_current_user)]):
 @app.post("/watchlist")
 async def add_to_watchlist(item: WatchListItem,user : Annotated[User,Depends(get_current_user)]):
     
-    add_watchlist_item_db(item,user,date)
+    add_watchlist_item_db(item,user)
     
     return {f"Successfully added to watchlist item with id: {item.tmdb_id}"}
     

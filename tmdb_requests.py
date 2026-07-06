@@ -73,7 +73,7 @@ def get_details_movie(tmdb_id : int):
             "poster": poster_url 
             }
 def search_movie(query : str):
-    url = f"https://api.themoviedb.org/3/search/tv?query={query}&include_adult=false"
+    url = f"https://api.themoviedb.org/3/search/movie?query={query}&include_adult=false"
     headers = {
         "accept" : "application/json",
         "Authorization": f"Bearer {API_KEY}"
@@ -90,7 +90,7 @@ def search_movie(query : str):
         })
     return results
 def search_tv(query : str):
-    url = f"https://api.themoviedb.org/3/search/movie?query={query}&include_adult=false"
+    url = f"https://api.themoviedb.org/3/search/tv?query={query}&include_adult=false"
     headers = {
         "accept" : "application/json",
         "Authorization": f"Bearer {API_KEY}"

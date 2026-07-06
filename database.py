@@ -1,5 +1,8 @@
 import sqlite3
+from tmdb_requests import get_details_movie,get_details_tv
+from datetime import datetime
 
+current_time = datetime.now().isoformat()
 def create_watchlist():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
@@ -36,8 +39,9 @@ def create_user_db():
     conn.commit()
     conn.close()
 def format_media_row(row):
+    year = row[1].split("-")[0] if row[1] else "N/A"
     return {"title":row[0],
-            "year":row[1].split("-") if row[1] else "N/A",
+            "year":year,
             "status":row[2],
             "rating":row[3],
             "poster_url":f"https://image.tmdb.org/t/p/w500{row[4]}" if row[4] is not None else None
@@ -65,18 +69,48 @@ def display_watchlist_items(user_id):
     
    
 
-def add_watchlist_item_db(item,user,date):
+def add_watchlist_item_db(item,user):
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
     cur.execute('''SELECT 1 FROM media_cache WHERE tmdb_id = ? AND media_type = ?''',(item.tmdb_id,item.media_type.value))
     if not cur.fetchone():
-        #pobieramy z api
-        pass
-    
-    
-    #cur.execute('''INSERT INTO watchlist (user_id, tmdb_id,media_type,status,rating,added_at) VALUES (?,?,?,?,?,?)''',
-                #(user.id,item.tmdb_id,item.media_type,item.status,item.rating,date,))
-    
+        if item.media_type.value == "movie":
+            data = get_details_movie(item.tmdb_id)
+            cur.execute('''INSERT INTO media_cache 
+                        (tmdb_id,
+                        media_type,
+                        title,
+                        release_date,
+                        poster_path, last_updated) 
+                        VALUES (?,?,?,?,?,?) ''',
+                        (item.tmdb_id,item.media_type.value,
+                         data['name'],
+                         data['release_date'],
+                         data['poster'],
+                         current_time,
+                         ))
+        else:
+            data = get_details_tv(item.tmdb_id)
+            cur.execute('''INSERT INTO media_cache 
+                        (tmdb_id,
+                        media_type,
+                        title,
+                        release_date,
+                        poster_path, last_updated) 
+                        VALUES (?,?,?,?,?,?) ''',
+                        (item.tmdb_id,item.media_type.value,
+                         data['name'],
+                         data['release_date'],
+                         data['poster'],
+                         current_time,
+                         ))
+    cur.execute('''INSERT INTO watchlist (user_id,
+                tmdb_id,
+                media_type,
+                status,
+                rating,
+                added_at) VALUES (?,?,?,?,?,?)''',
+                (user.id,item.tmdb_id,item.media_type.value,item.status,item.rating,current_time,))
     conn.close()
 def edit_watchlist_item(id,user_id,edited_item):
     conn = sqlite3.connect('database.db')
