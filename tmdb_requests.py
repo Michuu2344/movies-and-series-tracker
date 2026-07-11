@@ -31,7 +31,8 @@ def get_details_tv(tmdb_id : int):
     actors = sorted(people,key = lambda x: x['popularity'],reverse=True)
     sorted_actors = actors[:5]
     
-    return {"name": (response2['name']),
+    return {"tmdb_id":tmdb_id,
+            "name": (response2['name']),
             "release_date":(response2['first_air_date']),
             "overview":(response2['overview']),
             "genre": response2['genres'][0:2],
@@ -63,7 +64,7 @@ def get_details_movie(tmdb_id : int):
     poster_path = response2['poster_path']
     
     poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}"
-    return {"tmdb_id": id,
+    return {"tmdb_id": tmdb_id,
             "name": (response2['title']),
             "release_date":(response2['release_date']),
             "overview":(response2['overview']),

@@ -26,7 +26,7 @@ class WatchListItem(BaseModel):
     tmdb_id : int
     media_type : Mediatype
     status : Status
-    rating: Optional[int] = Field(None,ge=1,le=10)
+    rating: int | None = Field(None, ge=1, le=10)
 class EditWatchListItem(BaseModel):
     status : Optional[Status] = None
     rating: Optional[int] = None

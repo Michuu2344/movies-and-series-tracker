@@ -1,7 +1,7 @@
 import sqlite3
 from tmdb_requests import get_details_movie,get_details_tv
 from datetime import datetime
-
+from fastapi import HTTPException
 current_time = datetime.now().isoformat()
 def create_watchlist():
     conn = sqlite3.connect('database.db')
@@ -86,10 +86,21 @@ def display_favourite_items(user_id):
     conn.close()
     favourites = [format_media_row(row) for row in rows]
     return favourites
-
-   
-
+def check_watchlist_item(item,user):
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    cur.execute('''SELECT 1 from watchlist WHERE tmdb_id = ? AND media_type = ? AND user_id = ?''',
+                (item.tmdb_id,item.media_type.value,user.id))
+    conn.close()
+    if cur.fetchone():
+        return True
+    else:
+        return False
+    
 def add_watchlist_item_db(item,user):
+    if check_watchlist_item(item,user) == True:
+        return {"message":"This item is already on your watchlist"}
+    
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
     cur.execute('''SELECT 1 FROM media_cache WHERE tmdb_id = ? AND media_type = ?''',(item.tmdb_id,item.media_type.value))
@@ -124,7 +135,8 @@ def add_watchlist_item_db(item,user):
                          data['poster'],
                          current_time,
                          ))
-                    
+    
+
     cur.execute('''INSERT INTO watchlist (user_id,
                 tmdb_id,
                 media_type,
@@ -134,6 +146,7 @@ def add_watchlist_item_db(item,user):
                 (user.id,item.tmdb_id,item.media_type.value,item.status,item.rating,current_time,))
     conn.commit()
     conn.close()
+    return {"message":f"Successfully added to watchlist item with tmdb_id of: {item.tmdb_id}"}
 def edit_watchlist_item(id,user_id,edited_item,media_type):
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
@@ -150,7 +163,7 @@ def edit_watchlist_item(id,user_id,edited_item,media_type):
     values.append(id)
     values.append(user_id)
     values.append(media_type)
-    sql = f"UPDATE watchlist SET {' ,'.join(fields)} WHERE id = ? AND user_id = ? AND media_type = ?"
+    sql = f"UPDATE watchlist SET {' ,'.join(fields)} WHERE tmdb_id = ? AND user_id = ? AND media_type = ?"
     cur.execute(sql,tuple(values))
     conn.commit()
     conn.close()
@@ -183,4 +196,13 @@ def save_user_to_db(new_user,hashed):
                 (new_user.username,new_user.email,new_user.full_name,hashed))
     conn.commit()
     conn.close()
-
+def delete_watchlist_item(id,user_id,media_type):
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    cur.execute('''DELETE FROM watchlist WHERE tmdb_id = ? AND user_id = ? AND media_type = ?''',(id,user_id,media_type,))
+    rows = cur.rowcount
+    conn.commit()
+    conn.close()
+    if rows == 0:
+        raise HTTPException(status_code=404,detail=f"No item found with tmdb_id of {id}")
+    return {"message":f"Succesfully deleted a {media_type} item with tmdb_id of {id}"}
