@@ -3,22 +3,33 @@ from datetime import datetime, timedelta,timezone
 from typing import Annotated
 from fastapi import FastAPI,HTTPException,Depends,status
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
-from models import Mediatype,User, Status,UserRegister,WatchListItem,EditWatchListItem
-from tmdb_requests import search_movie,search_tv,get_details_tv,get_details_movie
-from database import create_user_db,create_watchlist,save_user_to_db,add_watchlist_item_db,edit_watchlist_item,display_watchlist_items,create_media_cache,display_favourite_items,delete_watchlist_item
-from authentication import authenticate_user,Token,ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token,get_password_hash,get_current_user
-from authentication import oauth2_scheme
+from backend.models import Mediatype,User, Status,UserRegister,WatchListItem,EditWatchListItem
+from backend.tmdb_requests import search_movie,search_tv,get_details_tv,get_details_movie
+from backend.database import create_user_db,create_watchlist,save_user_to_db,add_watchlist_item_db,edit_watchlist_item,display_watchlist_items,create_media_cache,display_favourite_items,delete_watchlist_item
+from backend.authentication import authenticate_user,Token,ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token,get_password_hash,get_current_user
+from backend.authentication import oauth2_scheme
+
+from fastapi.middleware.cors import CORSMiddleware
+
+
 now = datetime.now()
 date = now.strftime("%Y/%m/%d")
 create_user_db()
 create_watchlist()
 create_media_cache()
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:5500"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 @app.post("/auth/register")
 async def register_user(user : UserRegister):
     hashed = get_password_hash(user.password)
     save_user_to_db(user,hashed)
-    return {"message":"Succesfully signed user with username: {user.username} "}
+    return {"message":f"    Succesfully signed user with username: {user.username} "}
 @app.post("/auth/login")
 async def login_for_access_token(form_data : Annotated[OAuth2PasswordRequestForm,Depends()],)->Token:
     user = authenticate_user(form_data.username,form_data.password)

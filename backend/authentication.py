@@ -8,8 +8,8 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
 from pydantic import BaseModel
-from models import User,UserInDB, UserRegister
-from database import get_user_from_db
+from backend.models import User,UserInDB, UserRegister
+from backend.database import get_user_from_db
 
 import os
 from dotenv import load_dotenv

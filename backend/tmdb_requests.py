@@ -82,12 +82,15 @@ def search_movie(query : str):
     data = requests.get(url,headers=headers)
     response = data.json()
     results = []
+    
+    poster_url = f"https://image.tmdb.org/t/p/w500"
     for movie in response['results']:
         results.append({
             "tmdb_id":movie['id'],
             "title":movie['title'],
             "release_date":movie['release_date'],
-            "overview":movie['overview'] 
+            "overview":movie['overview'],
+            "poster":f"{poster_url}{movie['poster_path']}"
         })
     return results
 def search_tv(query : str):
@@ -99,12 +102,17 @@ def search_tv(query : str):
     data = requests.get(url,headers=headers)
     response = data.json()
     results = []
+    
+    
+    poster_url = f"https://image.tmdb.org/t/p/w500"
+
     for tv in response['results']:
         results.append({
             "tmdb_id":tv['id'],
             "title":tv['name'],
             "release_date":tv['first_air_date'],
-            "overview":tv['overview'] 
+            "overview":tv['overview'],
+            "poster":f"{poster_url}{tv['poster_path']}"
         })
     return results
         

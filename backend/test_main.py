@@ -1,14 +1,14 @@
 import os
 from fastapi.testclient import TestClient
-from main import app
+from backend.main import app
 import pytest
-from database import create_user_db,create_watchlist,create_media_cache
+from backend.database import create_user_db,create_watchlist,create_media_cache
 
-TEST_DB = "test_database.db"
+TEST_DB = ""
 
 @pytest.fixture(autouse=True)
 def setup_test_db(monkeypatch):
-    monkeypatch.setattr("database.DB_NAME",TEST_DB)
+    monkeypatch.setattr("database.DATABASE_URL",TEST_DB)
     create_user_db(TEST_DB)
     create_watchlist(TEST_DB)
     create_media_cache(TEST_DB)
