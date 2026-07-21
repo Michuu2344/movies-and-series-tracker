@@ -90,7 +90,8 @@ def search_movie(query : str):
             "title":movie['title'],
             "release_date":movie['release_date'],
             "overview":movie['overview'],
-            "poster":f"{poster_url}{movie['poster_path']}"
+            "poster":f"{poster_url}{movie['poster_path']}",
+            "rating":f"{movie['vote_average']:.2f}"
         })
     return results
 def search_tv(query : str):
@@ -112,7 +113,8 @@ def search_tv(query : str):
             "title":tv['name'],
             "release_date":tv['first_air_date'],
             "overview":tv['overview'],
-            "poster":f"{poster_url}{tv['poster_path']}"
+            "poster":f"{poster_url}{tv['poster_path']}",
+            "rating":f"{tv['vote_average']:.2f}"
         })
     return results
         
