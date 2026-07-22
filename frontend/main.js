@@ -20,7 +20,7 @@ document
       localStorage.setItem("token", data.access_token);
       document.getElementById("message").textContent = "Successfully logged in";
 
-      window.location.href = "watchlist.html";
+      window.location.href = "menu.html";
     } else {
       document.getElementById("message").textContent =
         "Wrong username or password";

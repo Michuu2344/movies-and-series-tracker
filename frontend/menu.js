@@ -61,6 +61,7 @@ try{
   const watchlistBtn = clone.querySelector(".modal-movie-btn");
   if(watchlistBtn){
     watchlistBtn.onclick = () =>{
+      
       console.log("Dodaję element z  ID:", tmdbId);
     };
   }
@@ -109,27 +110,28 @@ function displayResults(results, mediaTypeValue) {
     if (btn) {
         btn.onclick = (e) => {
             
+         
+
             console.log("Dodaję do bazy TMDB ID:", item.tmdb_id);
             
         };
       };
 
     
-    resultsdiv.append(clone)
+    resultsdiv.append(clone);
   });
 };
 document.getElementById("searchForm").addEventListener("submit", async function (e) {
     e.preventDefault();
     const search_query = document.getElementById("search_watchlist").value;
+    
     const mediaTypeValue = document.querySelector('input[name="mediatype"]:checked').value;
     const url = `http://127.0.0.1:8000/search?query=${encodeURIComponent(search_query)}&media_type=${mediaTypeValue}`;
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        
       });
       if (response.ok) {
         const data = await response.json();
@@ -139,4 +141,4 @@ document.getElementById("searchForm").addEventListener("submit", async function 
     } catch (error) {
       console.log("Error:", error);
     }
-  });
+  })
