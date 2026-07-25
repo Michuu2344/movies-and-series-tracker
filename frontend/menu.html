@@ -30,7 +30,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
+              <a class="nav-link active" style="font-weight: bold;" aria-current="page" href="menu.html">Home</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="browse.html">Explore</a>
@@ -39,7 +39,7 @@
               <a class="nav-link" href="#">Watchlist</a>
             </li>
           </ul>
-          <form id="navSeachForm" class="d-flex" role="search">
+          <form id="navSearchForm" class="d-flex" role="search">
             <div class="custom-search-group">
               <select
                 class="custom-select"
@@ -69,7 +69,7 @@
         </div>
       </div>
     </nav>
-    <form id="searchForm" class="container mb-4" style="max-width: 500px">
+    <form id="searchForm" class="search-box" style="max-width: 500px">
       <div class="d-flex justify-content-center mb-3">
         <div
           class="btn-group w-100"
@@ -106,10 +106,10 @@
         <input
           type="text"
           id="search_watchlist"
-          class="form-control mb-3"
+          class="form-control search-input"
           placeholder="Enter a movie or a tv show"
         />
-        <button type="submit" class="btn btn-primary">Search</button>
+        <button type="submit" class="btn btn-primary search-btn">Search</button>
       </div>
     </form>
     <div id="results" class="container mt-4"></div>

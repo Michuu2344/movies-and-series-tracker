@@ -1,7 +1,7 @@
 import json
 from datetime import datetime, timedelta,timezone
 from typing import Annotated
-from fastapi import FastAPI,HTTPException,Depends,status
+from fastapi import FastAPI,HTTPException,Depends,status,Response
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from backend.models import Mediatype,User, Status,UserRegister,WatchListItem,EditWatchListItem
 from backend.tmdb_requests import search_movie,search_tv,get_details_tv,get_details_movie
@@ -31,15 +31,26 @@ async def register_user(user : UserRegister):
     save_user_to_db(user,hashed)
     return {"message":f"    Succesfully signed user with username: {user.username} "}
 @app.post("/auth/login")
-async def login_for_access_token(form_data : Annotated[OAuth2PasswordRequestForm,Depends()],)->Token:
+async def login_for_access_token(response : Response,form_data : OAuth2PasswordRequestForm = Depends ()):
     user = authenticate_user(form_data.username,form_data.password)
     if not user:
         raise HTTPException(status_code= status.HTTP_401_UNAUTHORIZED,
                             detail="Incorrect username or password",
                             headers={"WWW-Authenticate": "Bearer"})
     access_token_expires = timedelta(minutes = ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire_date = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data = {"sub":user.username},expires_delta=access_token_expires)
-    return Token(access_token=access_token,token_type="bearer")
+    response.set_cookie(
+        key = "access_token",
+        value = access_token,
+        max_age= expire_date,
+        httponly=True,
+        samesite="lax",
+        secure=False,
+        path="/"
+    )
+
+    return {"message":"Logged in successfully"}
 
 @app.get("/")
 async def home():

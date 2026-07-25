@@ -1,7 +1,24 @@
-const token = localStorage.getItem("token");
-if (!token) {
-  window.location.href = "index.html";
-}
+
+
+const searchForm = document.getElementById("navSearchForm");
+
+searchForm.addEventListener("submit", (e)=>{
+  e.preventDefault();
+
+  const query=document.getElementById("navSearchInput").value.trim();
+
+  const mediatype = document.getElementById("navMediaType").value;
+
+  if(!query){
+    return;
+  }
+  window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
+
+
+
+});
+
+
 async function showDetails(tmdbId, mediaType) {
   
   
@@ -26,7 +43,7 @@ try{
   const clone = template.content.cloneNode(true);
 
   const titleEl = clone.querySelector(".modal-movie-title");
-  if (titleEl) titleEl.textContent = data.title;
+  if (titleEl) titleEl.textContent = data.name;
   
   const posterEl = clone.querySelector(".modal-movie-poster");
   if(posterEl) posterEl.src = data.poster || 'https://via.placeholder.com/200x300';
@@ -93,7 +110,7 @@ function displayResults(results, mediaTypeValue) {
   
   results.forEach((item) => {
     const clone = template.content.cloneNode(true);
-    clone.querySelector(".movie-title").textContent = item.title;
+    clone.querySelector(".movie-title").textContent = item.name;
     clone.querySelector(".movie-date").textContent = item.release_date;
     clone.querySelector(".movie-poster").src = item.poster;
     clone.querySelector(".movie-rating").textContent = item.rating;
@@ -127,7 +144,6 @@ document.getElementById("searchForm").addEventListener("submit", async function 
     
     const mediaTypeValue = document.querySelector('input[name="mediatype"]:checked').value;
     const url = `http://127.0.0.1:8000/search?query=${encodeURIComponent(search_query)}&media_type=${mediaTypeValue}`;
-    const token = localStorage.getItem("token");
     try {
       const response = await fetch(url, {
         method: "GET",

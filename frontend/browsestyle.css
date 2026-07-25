@@ -45,20 +45,3 @@
 .custom-btn:hover {
   color: #0d6efd;
 }
-.search-input{
-  height:55px;
-  font-size:20px;
-  border-radius:15px;
-}
-.search-btn{
-  width:100%;
-  height:55px;
-   border-radius:15px;
-  font-size:18px;
-  font-weight: bold;
-  color: white;
-  background-color: black;
-}
-.search-box{
-  padding: 40px;
-}

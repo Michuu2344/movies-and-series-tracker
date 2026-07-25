@@ -87,7 +87,7 @@ def search_movie(query : str):
     for movie in response['results']:
         results.append({
             "tmdb_id":movie['id'],
-            "title":movie['title'],
+            "name":movie['title'],
             "release_date":movie['release_date'],
             "overview":movie['overview'],
             "poster":f"{poster_url}{movie['poster_path']}",
@@ -110,7 +110,7 @@ def search_tv(query : str):
     for tv in response['results']:
         results.append({
             "tmdb_id":tv['id'],
-            "title":tv['name'],
+            "name":tv['name'],
             "release_date":tv['first_air_date'],
             "overview":tv['overview'],
             "poster":f"{poster_url}{tv['poster_path']}",
