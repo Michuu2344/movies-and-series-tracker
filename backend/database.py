@@ -20,12 +20,13 @@ def create_watchlist(db_name = None):
     cur = conn.cursor()
     cur.execute('''CREATE TABLE IF NOT EXISTS watchlist(
                 id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL REFERENCES users(id),
                 tmdb_id INTEGER NOT NULL,
                 media_type TEXT ,
                 status TEXT NOT NULL,
+                is_favourite BOOLEAN NOT NULL DEFAULT FALSE,
                 rating INTEGER,
-                added_at TEXT);''')
+                added_at TIMESTAMP NOT NULL);''')
     conn.commit()
     conn.close()
 def create_media_cache(db_name = None):
@@ -56,13 +57,14 @@ def create_user_db(db_name = None):
     conn.commit()
     conn.close()
 def format_media_row(row):
-    year = row[2].split("-")[0] if row[2] else "N/A"
+    year = row[3].split("-")[0] if row[3] else "N/A"
     return {"tmdb_id":row[0],
-            "title":row[1],
+            "media_type": row[1],
+            "title":row[2],
             "year":year,
-            "status":row[3],
-            "rating":row[4],
-            "poster_url":f"https://image.tmdb.org/t/p/w500{row[5]}" if row[5] is not None else None
+            "status":row[4],
+            "rating":row[5],
+            "poster_url":f"https://image.tmdb.org/t/p/w500{row[6]}" if row[6] is not None else None
             }
     
 def display_watchlist_items(user_id,db_name = None):
@@ -72,6 +74,7 @@ def display_watchlist_items(user_id,db_name = None):
     cur = conn.cursor()
     cur.execute('''SELECT 
                 w.tmdb_id,
+                w.media_type,
                 m.title,
                 m.release_date,
                 w.status,
@@ -170,8 +173,9 @@ def add_watchlist_item_db(item,user,db_name = None):
                 media_type, 
                 status,
                 rating,
-                added_at) VALUES (%s,%s,%s,%s,%s,%s)''',
-                (user.id,item.tmdb_id,item.media_type.value,item.status,item.rating,current_time,))
+                is_favourite,
+                added_at) VALUES (%s,%s,%s,%s,%s,%s,%s)''',
+                (user.id,item.tmdb_id,item.media_type.value,item.status.value,item.rating,item.is_favourite,current_time,))
     conn.commit()
     conn.close()
     return {"message":f"Successfully added to watchlist item with tmdb_id of: {item.tmdb_id}"}

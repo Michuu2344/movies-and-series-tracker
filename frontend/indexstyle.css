@@ -1,0 +1,93 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Kontener */
+.container {
+    max-width: 450px !important;
+}
+
+/* Nagłówek */
+h2 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+}
+
+/* Karta logowania */
+.card {
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+    padding: 35px !important;
+}
+
+/* Pola tekstowe */
+.form-control {
+    border-radius: 12px;
+    height: 50px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    transition: .3s;
+}
+
+.form-control::placeholder {
+    color: rgba(255,255,255,.65);
+}
+
+.form-control:focus {
+    background: rgba(255,255,255,.12);
+    color: white;
+    border-color: #3b82f6;
+    box-shadow: 0 0 12px rgba(59,130,246,.45);
+}
+
+/* Przycisk */
+.btn-primary {
+    height: 50px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 17px;
+    border: none;
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    transition: .3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #1d4ed8, #2563eb);
+    box-shadow: 0 10px 20px rgba(37,99,235,.4);
+}
+
+/* Link do rejestracji */
+.text-center {
+    color: white;
+}
+
+a {
+    color: #60a5fa;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* Komunikat */
+#message {
+    color: #ff6b6b !important;
+    font-weight: 500;
+}

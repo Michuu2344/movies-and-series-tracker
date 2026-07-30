@@ -45,7 +45,7 @@ async function showDetails(tmdbId, mediaType) {
       posterEl.src = data.poster || "https://via.placeholder.com/200x300";
 
     const ratingEl = clone.querySelector(".modal-movie-rating");
-    if (ratingEl) ratingEl.textContent = `⭐ Ocena: ${data.rating || "0.0"}`;
+    if (ratingEl) ratingEl.textContent = `⭐ Rating: ${data.rating || "0.0"}`;
 
     const release_dateEl = clone.querySelector(".modal-movie-date");
     if (release_dateEl) release_dateEl.textContent = data.release_date;
@@ -159,7 +159,8 @@ function displayResults(results, mediaTypeValue) {
           tmdb_id : item.tmdb_id,
           media_type : mediaTypeValue,
           status : "want_to_watch",
-          rating: null
+          rating: null,
+          is_favourite : false
         };
     try {
       const response = await fetch("http://127.0.0.1:8000/watchlist",{

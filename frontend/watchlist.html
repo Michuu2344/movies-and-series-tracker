@@ -2,19 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watchlist</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link href="browsestyle.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="watchliststyle.css" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg custom-nav" data-bs-theme="dark" >
+    <nav class="navbar navbar-expand-lg custom-nav" data-bs-theme="dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
-          <img src="mvslogo_nobg.png" alt="" width="50" height="50" style="background-color: #1F2937;border-radius: 12px ;" />
+          <img src="mvslogo_nobg.png" alt="" width="50" height="auto" style="background-color: #1F2937;border-radius: 12px ;" />
         </a>
         <button
           class="navbar-toggler"
@@ -30,13 +27,13 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link " aria-current="page" href="menu.html">Home</a>
+              <a class="nav-link" href="menu.html">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" style="font-weight: bold" href="browse.html">Explore</a>
+              <a class="nav-link" href="browse.html">Explore</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="watchlist.html">Watchlist</a>
+              <a class="nav-link active" style="font-weight: bold;" aria-current="page" href="watchlist.html">Watchlist</a>
             </li>
           </ul>
           <form id="navSearchForm" class="d-flex" role="search">
@@ -69,19 +66,7 @@
         </div>
       </div>
     </nav>
-
     <div id="results" class="container mt-4"></div>
-    
-    <div class="modal" id="detailsModal" tabindex="-1">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content" id="modalContent"></div>
-      </div>
-
-
-    </div>
-
-
-
     <template id="movieCardTemplate">
       <div
         class="card mb-4 shadow-sm mx-auto overflow-hidden"
@@ -98,16 +83,8 @@
 
           <div class="col-9 d-flex flex-column justify-content-between p-3">
             <div>
+              <div class="d-flex justify-content-between align-items-center gap-3 mb-3  ">
               <h2 class="h4 mb-2 fw-bold movie-title">Tytuł</h2>
-
-              <div class="d-flex align-items-center gap-3 mb-3">
-                <h3 class="h6 text-muted m-0 movie-date">Data</h3>
-
-                <span class="badge movie-badge">Typ</span>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mt-2">
               <div class="d-flex align-items-center gap-2">
                 <img
                   src="https://t3.ftcdn.net/jpg/01/21/64/88/360_F_121648819_ZQ0tZ6tjLzxim1SG7CQ86raBw4sglCzB.jpg"
@@ -117,12 +94,48 @@
 
                 <p class="m-0 fw-bold fs-5 movie-rating">0.0</p>
               </div>
+              </div>
+              <div class="d-flex align-items-center gap-0 mb-0">
+                <h3 class="h6 text-muted m-0 movie-date">Data</h3>
 
+                <span class="badge movie-badge">Typ</span>
+              </div>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-outline-dark dropdown-toggle status-button"
+                 type="button"
+                  data-bs-toggle="dropdown">
+                  Watching
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark">
+                  <li><a href="#" class="dropdown-item status-item" data-status="want_to_watch">Want to watch</a></li>
+                  <li><a href="#" class="dropdown-item status-item" data-status="watching">Watching</a></li>
+                  <li><a href="#" class="dropdown-item status-item" data-status="completed">Completed</a></li>
+                  <li><a href="#" class="dropdown-item status-item" data-status="dropped">Dropped</a></li>
+                </ul>
+
+
+              </div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+            
               <button
-                class="btn btn-primary d-flex align-items-center justify-content-center fw-bold fs-4 watchlist-btn"
+                class="btn btn-danger d-flex align-items-center justify-content-center fw-bold fs-4 watchlist-btn"
                 style="width: 45px; height: 45px; border-radius: 10px"
               >
-                +
+                <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="100" height="100">
+  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#FF0000"/>
+</svg>
+              </button>
+              <button
+                class="btn d-flex align-items-center justify-content-center fw-bold fs-4 watchlist-remove-btn"
+                style="width: 45px; height: 45px; border-radius: 10px"
+              >
+                <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="3 6 5 6 21 6"></polyline>
+  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+  <line x1="10" y1="11" x2="10" y2="17"></line>
+  <line x1="14" y1="11" x2="14" y2="17"></line>
+</svg>
               </button>
             </div>
           </div>
@@ -167,6 +180,6 @@
       </div>
     </template>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="browse.js"></script>
+    <script src="watchlist.js"></script>
 </body>
 </html>

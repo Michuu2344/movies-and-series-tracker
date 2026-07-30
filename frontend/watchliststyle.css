@@ -50,3 +50,56 @@
 .custom-nav{
   background-color: #111827;
 }
+
+.status-btn{
+    min-width:170px;
+    font-weight:600;
+    border:none;
+    border-radius:10px;
+    transition:.25s;
+}
+.watchlist-remove-btn{
+  color: beige;
+  background-color: gray;
+}
+.watchlist-remove-btn:hover{
+  background-color: #1e293b;
+  color: white;
+}
+.status-want_to_watch{
+    background:#facc15;
+    color:#1f2937;
+}
+
+
+.status-watching{
+    background:#3b82f6;
+    color:white;
+}
+
+
+.status-completed{
+    background:#22c55e;
+    color:white;
+}
+
+
+.status-dropped{
+    background:#ef4444;
+    color:white;
+}
+
+.dropdown-menu{
+    border:none;
+    border-radius:12px;
+    background:#1e293b;
+}
+
+.dropdown-item{
+    color:white;
+}
+
+.dropdown-item:hover{
+    background:#334155;
+    color:white;
+}

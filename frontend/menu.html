@@ -3,18 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Watchlist</title>
+    <title>Menu</title>
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
     <link href="menustyle.css" rel="stylesheet">
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg custom-nav" data-bs-theme="dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
-          <img src="mvslogo.png" alt="" width="50" height="auto" />
+          <img src="mvslogo_nobg.png" alt="" width="50" height="50" style="background-color: #1F2937;border-radius: 12px ;" />
         </a>
         <button
           class="navbar-toggler"
@@ -36,7 +36,7 @@
               <a class="nav-link" href="browse.html">Explore</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Watchlist</a>
+              <a class="nav-link" href="watchlist.html">Watchlist</a>
             </li>
           </ul>
           <form id="navSearchForm" class="d-flex" role="search">
@@ -69,7 +69,210 @@
         </div>
       </div>
     </nav>
-    <form id="searchForm" class="search-box" style="max-width: 500px">
+    <body>
+
+<!-- Hero -->
+
+<section class="hero">
+
+    <div class="container">
+
+        <h1>Find your next movie</h1>
+
+        <p>
+            Search millions of movies and TV series.
+        </p>
+
+        <form class="search-box mt-5">
+
+            <div class="btn-group w-100 mb-3">
+
+                <input
+                    type="radio"
+                    class="btn-check"
+                    name="media"
+                    id="movie"
+                    checked
+                >
+
+                <label class="btn btn-outline-primary" for="movie">
+                    🎬 Movies
+                </label>
+
+                <input
+                    type="radio"
+                    class="btn-check"
+                    name="media"
+                    id="tv"
+                >
+
+                <label class="btn btn-outline-primary" for="tv">
+                    📺 TV Series
+                </label>
+
+            </div>
+
+            <div class="input-group">
+
+                <input
+                    class="form-control form-control-lg"
+                    placeholder="Search movies or TV series..."
+                >
+
+                <button class="btn btn-primary">
+                    Search
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+<!-- Trending -->
+
+<div class="container mb-5">
+
+    <h2 class="section-title">
+        🔥 Trending Movies
+    </h2>
+
+    <div class="row g-4">
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Popular Movies -->
+
+<div class="container mb-5">
+
+    <h2 class="section-title">
+        🎬 Popular Movies
+    </h2>
+
+    <div class="row g-4">
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Popular TV -->
+
+<div class="container mb-5">
+
+    <h2 class="section-title">
+        📺 Popular TV Shows
+    </h2>
+
+    <div class="row g-4">
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="movie-card">
+                <div class="placeholder">
+                    Poster
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+    <!-- <form id="searchForm" class="search-box" style="max-width: 500px">
       <div class="d-flex justify-content-center mb-3">
         <div
           class="btn-group w-100"
@@ -120,7 +323,7 @@
       </div>
 
 
-    </div>
+    </div> -->
 
 
     
@@ -213,7 +416,7 @@
         </div>
       </div>
     </template>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
     <script src="menu.js"></script>
   </body>
 </html>
