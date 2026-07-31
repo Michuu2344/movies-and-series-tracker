@@ -5,9 +5,9 @@ from fastapi import FastAPI,HTTPException,Depends,status,Response
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from backend.models import Mediatype,User, Status,UserRegister,WatchListItem,EditWatchListItem
 from backend.tmdb_requests import search_movie,search_tv,get_details_tv,get_details_movie
-from backend.database import create_user_db,create_watchlist,save_user_to_db,add_watchlist_item_db,edit_watchlist_item,display_watchlist_items,create_media_cache,display_favourite_items,delete_watchlist_item
+from backend.database import create_user_db,create_watchlist,save_user_to_db,add_watchlist_item_db,edit_watchlist_item,display_watchlist_items,create_media_cache,display_favourite_items,delete_watchlist_item,check_user_exists
 from backend.authentication import authenticate_user,Token,ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token,get_password_hash,get_current_user
-from backend.authentication import oauth2_scheme
+from backend.authentication import set_auth_cookie
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -26,29 +26,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 @app.post("/auth/register")
-async def register_user(user : UserRegister):
+async def register_user(user : UserRegister,response : Response):
+
+    if check_user_exists(user.username):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="User with that username already exists")
+
+    
     hashed = get_password_hash(user.password)
-    save_user_to_db(user,hashed)
+    try:
+        save_user_to_db(user,hashed)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail="Error saving user to database" )
+    access_token_expires = timedelta(minutes = ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    access_token = create_access_token(data={"sub": user.username},expires_delta=access_token_expires)
+    set_auth_cookie(response,access_token)
     return {"message":f"    Succesfully signed user with username: {user.username} "}
 @app.post("/auth/login")
 async def login_for_access_token(response : Response,form_data : OAuth2PasswordRequestForm = Depends ()):
     user = authenticate_user(form_data.username,form_data.password)
     if not user:
         raise HTTPException(status_code= status.HTTP_401_UNAUTHORIZED,
-                            detail="Incorrect username or password",
-                            headers={"WWW-Authenticate": "Bearer"})
+                            detail="Incorrect username or password")
     access_token_expires = timedelta(minutes = ACCESS_TOKEN_EXPIRE_MINUTES)
-    expire_date = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data = {"sub":user.username},expires_delta=access_token_expires)
-    response.set_cookie(
-        key = "access_token",
-        value = access_token,
-        max_age= expire_date,
-        httponly=True,
-        samesite="lax",
-        secure=False,
-        path="/"
-    )
+    set_auth_cookie(response,access_token)
 
     return {"message":"Logged in successfully"}
 
@@ -88,7 +91,7 @@ async def add_to_watchlist(item: WatchListItem,user : Annotated[User,Depends(get
     
     
 
-@app.put("/watchlist/{tmdb_id}")
+@app.patch("/watchlist/{tmdb_id}")
 async def edit_watchlist(tmdb_id: int,item : EditWatchListItem, user : Annotated[User,Depends(get_current_user)],media_type: Mediatype = Mediatype.movie,):
    return edit_watchlist_item(tmdb_id,user.id,item,media_type)
 @app.delete("/watchlist/{tmdb_id}")

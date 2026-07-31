@@ -2,12 +2,11 @@ import sqlite3
 import psycopg2
 import os   
 from dotenv import load_dotenv
-
 from backend.tmdb_requests import get_details_movie,get_details_tv
 from datetime import datetime
 from fastapi import HTTPException
 current_time = datetime.now().isoformat()
-
+from backend.models import EditWatchListItem
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -179,9 +178,14 @@ def add_watchlist_item_db(item,user,db_name = None):
     conn.commit()
     conn.close()
     return {"message":f"Successfully added to watchlist item with tmdb_id of: {item.tmdb_id}"}
-def edit_watchlist_item(id,user_id,edited_item,media_type,db_name = None):
+def edit_watchlist_item(id : int,user_id : int,edited_item : EditWatchListItem,media_type : str,db_name = None):
     if db_name is None:
         db_name = DATABASE_URL
+
+    update_data = edited_item.model_dump(exclude_unset=True)
+
+    
+    
     conn = psycopg2.connect(db_name)
     cur = conn.cursor()
     fields = []
@@ -246,4 +250,24 @@ def delete_watchlist_item(id,user_id,media_type,db_name = None):
     if rows == 0:
         raise HTTPException(status_code=404,detail=f"No item found with tmdb_id of {id}")
     return {"message":f"Succesfully deleted a {media_type} item with tmdb_id of {id}"}
+
+def check_user_exists(username : str,db_name = None):
+    if db_name is None:
+        db_name = DATABASE_URL
+    conn = psycopg2.connect(db_name)
+    cur = conn.cursor()
+    cur.execute('''SELECT 1 FROM users WHERE username = %s''',(username,))
+    try:
+        result = cur.fetchone()
+        if result is not None:
+            return True
+        else:
+            return False
+    finally:
+        conn.close()
+    
+
+
+
+
 

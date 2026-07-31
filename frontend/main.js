@@ -6,7 +6,7 @@ document
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    formData = new URLSearchParams();
+    const formData = new URLSearchParams();
     formData.append("username", username);
     formData.append("password", password);
 
@@ -18,7 +18,6 @@ document
     });
     if (response.ok) {
       const data = await response.json();
-      localStorage.setItem("token", data.access_token);
       document.getElementById("message").textContent = "Successfully logged in";
 
       window.location.href = "menu.html";

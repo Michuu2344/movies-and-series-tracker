@@ -3,7 +3,7 @@ from typing import Annotated
 from datetime import datetime, timedelta,timezone
 import jwt
 from pydantic import BaseModel
-from fastapi import Depends,HTTPException,status,Request
+from fastapi import Depends,HTTPException,status,Request,Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
@@ -83,4 +83,18 @@ async def get_current_user(request : Request):
     if user is None:
         raise credentials_exception
     return user
+def set_auth_cookie(response : Response,access_token : str):
+    expire_date = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    response.set_cookie(
+            key = "access_token",
+            value = access_token,
+            max_age= ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+            expires= expire_date,
+            httponly=True,
+            samesite="lax",
+            secure=False,
+            path="/"
+            )
+
 
