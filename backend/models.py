@@ -31,3 +31,6 @@ class WatchListItem(BaseModel):
 class EditWatchListItem(BaseModel):
     status : Optional[Status] = None
     rating: Optional[int] = None
+class FavouriteRequest(BaseModel):
+    tmdb_id : int
+    media_type : Mediatype = Mediatype.movie

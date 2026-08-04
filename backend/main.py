@@ -3,9 +3,9 @@ from datetime import datetime, timedelta,timezone
 from typing import Annotated
 from fastapi import FastAPI,HTTPException,Depends,status,Response
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
-from backend.models import Mediatype,User, Status,UserRegister,WatchListItem,EditWatchListItem
+from backend.models import Mediatype,User, Status,UserRegister,WatchListItem,EditWatchListItem,FavouriteRequest
 from backend.tmdb_requests import search_movie,search_tv,get_details_tv,get_details_movie
-from backend.database import create_user_db,create_watchlist,save_user_to_db,add_watchlist_item_db,edit_watchlist_item,display_watchlist_items,create_media_cache,display_favourite_items,delete_watchlist_item,check_user_exists
+from backend.database import create_user_db,create_watchlist,save_user_to_db,add_watchlist_item_db,edit_watchlist_item,display_watchlist_items,create_media_cache,display_favourite_items,delete_watchlist_item,check_user_exists,addItemFavourites
 from backend.authentication import authenticate_user,Token,ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token,get_password_hash,get_current_user
 from backend.authentication import set_auth_cookie
 
@@ -20,7 +20,7 @@ create_media_cache()
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500"],
+    allow_origins=["http://127.0.0.1:5500","http://localhost:5500"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -87,13 +87,15 @@ async def display_watchlist(user : Annotated[User,Depends(get_current_user)]):
 @app.post("/watchlist")
 async def add_to_watchlist(item: WatchListItem,user : Annotated[User,Depends(get_current_user)]):
     return add_watchlist_item_db(item,user)
-    
-    
-    
 
 @app.patch("/watchlist/{tmdb_id}")
 async def edit_watchlist(tmdb_id: int,item : EditWatchListItem, user : Annotated[User,Depends(get_current_user)],media_type: Mediatype = Mediatype.movie,):
    return edit_watchlist_item(tmdb_id,user.id,item,media_type)
+
 @app.delete("/watchlist/{tmdb_id}")
 async def delete_from_watchlist(tmdb_id : int, user : Annotated[User,Depends(get_current_user)],media_type : Mediatype = Mediatype.movie,):
     return delete_watchlist_item(tmdb_id,user.id,media_type)
+
+@app.patch("/watchlist/{tmdb_id}/favourites")
+async def updateFavourite(tmdb_id : int,user :Annotated[User,Depends(get_current_user)],media_type : Mediatype = Mediatype.movie):
+    return addItemFavourites(tmdb_id,user.id,media_type)

@@ -123,7 +123,7 @@ function displayResults(results, mediaTypeValue) {
 
   if (!results || results.length === 0) {
     resultsdiv.innerHTML =
-      "<p class='text-center mt-4'>No results found</p>";
+      "<p class='text-center mt-4' style='font-size:32px;font-weight: bold;color : white;'>No results found</p>";
     return;
   }
   const template = document.getElementById("movieCardTemplate");

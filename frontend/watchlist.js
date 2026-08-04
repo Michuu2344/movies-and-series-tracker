@@ -12,8 +12,6 @@ searchForm.addEventListener("submit", (e) => {
   window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
 });
 
-
-
 function showToast(message){
   document.getElementById("toastMessage").textContent = message;
 
@@ -22,9 +20,60 @@ function showToast(message){
   const toast = new bootstrap.Toast(toastElement);
   
   toast.show()
+};
+async function addItemToFavourites(tmdbId,mediaType) {
+    try{
+    
+    const response  = await fetch(
+      `http://127.0.0.1:8000/watchlist/${tmdbId}/favourites?media_type=${mediaType}`,
+      {
+        method: "PATCH",
+        credentials: "include",
+        headers : {
+          "Content-Type":"application/json"
+        },
+      },
+    );
+    const message = "Added to favourites";
+    if(!response.ok){
+      showToast("We could not add this item to favourites");
+      return;
+    }
+    showToast(message)
+  }
+  catch(error){
+    showToast("We could not add this item to favourites");
+    console.error("Error favourites update",error);
+  }
+};
+async function updateStatus(status,tmdb_id,media_type){
+  try{
+    statusData = { 
+      "status": status
+    }
+    const response  = await fetch(
+      `http://127.0.0.1:8000/watchlist/${tmdb_id}?media_type=${media_type}`,
+      {
+        method: "PATCH",
+        credentials: "include",
+        headers : {
+          "Content-Type":"application/json"
+        },
+        body : JSON.stringify(statusData)
+      },
+    );
+    message = "Status updated";
+    if(!response.ok){
+      showToast("We could not update item status");
+    }
+    showToast("Status updated")
+  }
+  catch(error){
+    showToast("We could not update item status");
+    console.error("Error status update",error);
+  }
+};
 
-
-}
 async function removeFromWatchlist(tmdb_id, media_type = "movie") {
   try {
     const response = await fetch(
@@ -107,6 +156,40 @@ async function loadWatchlist() {
       if (rating) {
         rating.textContent = item.rating;
       }
+      
+      const statusButton= clone.querySelector(".status-button")
+
+      if(statusButton && item.status){
+        labels = {
+          watching : "Watching",
+          completed : "Completed",
+          want_to_watch : "Want to watch",
+          dropped : "Dropped"
+        };
+        statusButton.textContent = labels[item.status];
+
+        statusButton.dataset.currentStatus = item.status;
+      }; 
+      
+      const statusLinks = clone.querySelectorAll(".status-item")
+
+      statusLinks.forEach((link)=> {
+
+        link.addEventListener("click", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const newStatus = link.dataset.status;
+          const newStatusText = link.textContent.trim();
+
+          statusButton.textContent = newStatusText;
+
+
+          statusButton.dataset.currentStatus = newStatus;
+          updateStatus(newStatus,item.tmdb_id,item.media_type);
+        });
+      
+      });
 
       const removeBtn = clone.querySelector(".watchlist-remove-btn");
       removeBtn.onclick = async (e) => {
@@ -119,6 +202,8 @@ async function loadWatchlist() {
       favBtn.onclick = async (e) => {
         e.stopPropagation();
         
+        addItemToFavourites(item.tmdb_id,item.media_type);
+        console.log(".")
       }
 
 

@@ -13,11 +13,20 @@ searchForm.addEventListener("submit", (e)=>{
     return;
   }
   window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
-
-
-
+  
 });
+const homeSearch = document.getElementById("homeSearchForm");
 
+homeSearch.addEventListener("submit" , (e)=>{
+  e.preventDefault();
+  const query = document.getElementById("homeSearchInput").value.trim();
+  const mediatype = document.querySelector('input[name="media"]:checked').value;
+
+  if(!query){
+    return;
+  }
+  window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
+})
 
 async function showDetails(tmdbId, mediaType) {
   
