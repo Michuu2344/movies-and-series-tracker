@@ -260,7 +260,7 @@ def check_user_exists(username : str,db_name = None):
             return False
     finally:
         conn.close()
-def addItemFavourites(tmdb_id : int, user_id : int,media_type : str,db_name =None):
+def addItemFavourites(tmdb_id : int, user_id : int,media_type : str,isFavourite : bool,db_name =None):
     if db_name is None:
         db_name = DATABASE_URL
     conn = psycopg2.connect(db_name)
@@ -268,7 +268,7 @@ def addItemFavourites(tmdb_id : int, user_id : int,media_type : str,db_name =Non
     # jesli nie ma itemu na watchliscie to dodajemy
     try:
         cur.execute('''UPDATE watchlist SET is_favourite = %s WHERE user_id = %s AND tmdb_id = %s AND media_type = %s''',
-                    (True,user_id,tmdb_id,media_type))
+                    (isFavourite,user_id,tmdb_id,media_type))
         conn.commit()
     finally:
         conn.close()

@@ -141,3 +141,16 @@ body{
 
     background-attachment:fixed;
 }
+.watchlist-favourite-btn{
+
+    color:#888;
+
+    transition:.2s;
+
+}
+
+.watchlist-favourite-btn.active{
+
+    color:gold;
+
+}

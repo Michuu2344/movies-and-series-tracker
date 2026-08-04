@@ -97,5 +97,5 @@ async def delete_from_watchlist(tmdb_id : int, user : Annotated[User,Depends(get
     return delete_watchlist_item(tmdb_id,user.id,media_type)
 
 @app.patch("/watchlist/{tmdb_id}/favourites")
-async def updateFavourite(tmdb_id : int,user :Annotated[User,Depends(get_current_user)],media_type : Mediatype = Mediatype.movie):
-    return addItemFavourites(tmdb_id,user.id,media_type)
+async def updateFavourite(tmdb_id : int,user :Annotated[User,Depends(get_current_user)],is_favourite : bool,media_type : Mediatype = Mediatype.movie):
+    return addItemFavourites(tmdb_id,user.id,media_type,is_favourite)

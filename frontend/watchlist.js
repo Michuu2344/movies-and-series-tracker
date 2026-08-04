@@ -21,7 +21,7 @@ function showToast(message){
   
   toast.show()
 };
-async function addItemToFavourites(tmdbId,mediaType) {
+async function toggleFavourite(tmdbId,mediaType,isFavourite) {
     try{
     
     const response  = await fetch(
@@ -32,20 +32,38 @@ async function addItemToFavourites(tmdbId,mediaType) {
         headers : {
           "Content-Type":"application/json"
         },
+        body : JSON.stringify({"is_favourite": isFavourite})
       },
     );
-    const message = "Added to favourites";
-    if(!response.ok){
-      showToast("We could not add this item to favourites");
-      return;
+ if(!response.ok){
+
+            showToast("Could not update favourites.");
+
+            return false;
+
+        }
+
+        showToast(
+            isFavourite
+            ? "Added to favourites."
+            : "Removed from favourites."
+        );
+
+        return true;
+
     }
-    showToast(message)
-  }
-  catch(error){
-    showToast("We could not add this item to favourites");
-    console.error("Error favourites update",error);
-  }
-};
+
+    catch(error){
+
+        console.error(error);
+
+        showToast("Network error.");
+
+        return false;
+
+    }
+
+}
 async function updateStatus(status,tmdb_id,media_type){
   try{
     statusData = { 
@@ -201,9 +219,13 @@ async function loadWatchlist() {
       const favBtn = clone.querySelector(".watchlist-favourite-btn");
       favBtn.onclick = async (e) => {
         e.stopPropagation();
+        const newState = !item.is_favourite;
+        const success = await toggleFavourite(item.tmdb_id,item.media_type,newState);
         
-        addItemToFavourites(item.tmdb_id,item.media_type);
-        console.log(".")
+        if(success){
+          item.is_favourite = new StaticRange;
+          favBtn.classList.toggle("active");
+        }
       }
 
 
