@@ -3,7 +3,7 @@ from datetime import datetime, timedelta,timezone
 from typing import Annotated
 from fastapi import FastAPI,HTTPException,Depends,status,Response
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
-from backend.models import Mediatype,User, Status,UserRegister,WatchListItem,EditWatchListItem,FavouriteRequest
+from backend.models import Mediatype,User, Status,UserRegister,WatchListItem,EditWatchListItem,FavouriteUpdate
 from backend.tmdb_requests import search_movie,search_tv,get_details_tv,get_details_movie
 from backend.database import create_user_db,create_watchlist,save_user_to_db,add_watchlist_item_db,edit_watchlist_item,display_watchlist_items,create_media_cache,display_favourite_items,delete_watchlist_item,check_user_exists,addItemFavourites
 from backend.authentication import authenticate_user,Token,ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token,get_password_hash,get_current_user
@@ -97,5 +97,5 @@ async def delete_from_watchlist(tmdb_id : int, user : Annotated[User,Depends(get
     return delete_watchlist_item(tmdb_id,user.id,media_type)
 
 @app.patch("/watchlist/{tmdb_id}/favourites")
-async def updateFavourite(tmdb_id : int,user :Annotated[User,Depends(get_current_user)],is_favourite : bool,media_type : Mediatype = Mediatype.movie):
-    return addItemFavourites(tmdb_id,user.id,media_type,is_favourite)
+async def updateFavourite(tmdb_id : int,user :Annotated[User,Depends(get_current_user)],favourite : FavouriteUpdate,media_type : Mediatype = Mediatype.movie):
+    return addItemFavourites(tmdb_id,user.id,media_type,favourite.is_favourite)

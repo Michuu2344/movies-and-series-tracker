@@ -143,14 +143,13 @@ body{
 }
 .watchlist-favourite-btn{
 
-    color:#888;
-
+    background-color: white;
     transition:.2s;
-
 }
-
-.watchlist-favourite-btn.active{
-
-    color:gold;
-
+.heart-svg{
+  fill: rgba(106, 102, 102, 0.582);
+  transition:.2s;
+}
+.heart-svg.active{
+  fill: red;
 }

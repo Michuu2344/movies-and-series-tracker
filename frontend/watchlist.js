@@ -23,7 +23,9 @@ function showToast(message){
 };
 async function toggleFavourite(tmdbId,mediaType,isFavourite) {
     try{
-    
+    isFavouriteData = {
+      "is_favourite": isFavourite
+    };
     const response  = await fetch(
       `http://127.0.0.1:8000/watchlist/${tmdbId}/favourites?media_type=${mediaType}`,
       {
@@ -32,7 +34,7 @@ async function toggleFavourite(tmdbId,mediaType,isFavourite) {
         headers : {
           "Content-Type":"application/json"
         },
-        body : JSON.stringify({"is_favourite": isFavourite})
+        body : JSON.stringify(isFavouriteData)
       },
     );
  if(!response.ok){
@@ -217,14 +219,23 @@ async function loadWatchlist() {
         showToast(message);
       };
       const favBtn = clone.querySelector(".watchlist-favourite-btn");
+      const favHeart = clone.querySelector(".heart-svg");
+      if(item.is_favourite){
+        favHeart.classList.add("active");
+      }
+      else{
+        favHeart.classList.remove("active")
+      }
+
       favBtn.onclick = async (e) => {
         e.stopPropagation();
+        
+        
         const newState = !item.is_favourite;
         const success = await toggleFavourite(item.tmdb_id,item.media_type,newState);
-        
         if(success){
-          item.is_favourite = new StaticRange;
-          favBtn.classList.toggle("active");
+        item.is_favourite = newState;
+        favHeart.classList.toggle("active",newState);
         }
       }
 

@@ -63,7 +63,8 @@ def format_media_row(row):
             "year":year,
             "status":row[4],
             "rating":row[5],
-            "poster_url":f"https://image.tmdb.org/t/p/w500{row[6]}" if row[6] is not None else None
+            "poster_url":f"https://image.tmdb.org/t/p/w500{row[6]}" if row[6] is not None else None,
+            "is_favourite" : row[7]
             }
     
 def display_watchlist_items(user_id,db_name = None):
@@ -78,7 +79,8 @@ def display_watchlist_items(user_id,db_name = None):
                 m.release_date,
                 w.status,
                 w.rating,
-                m.poster_path
+                m.poster_path,
+                w.is_favourite
                 FROM watchlist w
                 LEFT JOIN media_cache m
                     ON w.tmdb_id = m.tmdb_id
@@ -268,9 +270,10 @@ def addItemFavourites(tmdb_id : int, user_id : int,media_type : str,isFavourite 
     # jesli nie ma itemu na watchliscie to dodajemy
     try:
         cur.execute('''UPDATE watchlist SET is_favourite = %s WHERE user_id = %s AND tmdb_id = %s AND media_type = %s''',
-                    (isFavourite,user_id,tmdb_id,media_type))
+                    (isFavourite,user_id,tmdb_id,media_type,))
         conn.commit()
     finally:
+        cur.close()
         conn.close()
 
 
