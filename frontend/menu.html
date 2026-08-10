@@ -72,7 +72,6 @@
     <body>
 
 <!-- Hero -->
-
 <section class="hero">
 
     <div class="container">
@@ -141,44 +140,11 @@
         🔥 Trending Movies
     </h2>
 
-    <div class="row g-4">
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
+    <div id="trendingMovies" class="row g-4">
+    
     </div>
-
-</div>
-
+    
+        
 <!-- Popular Movies -->
 
 <div class="container mb-5">
@@ -270,9 +236,38 @@
     </div>
 
 </div>
- 
-    
+
+
+
+
+
+
+
+<template id="trendingMoviesTemplate">
+<div class="col movie-column">
+            <div class="movie-card h-100">
+                <img
+              class="img-fluid movie-poster"
+              alt="posterPicture"
+              style="min-height: 180px"
+            />
+</div>
+</div>    
+</template>
+<div class="toast-container position-fixed bottom-0 end-0 p-3 pop-up-mess">
+    <div class="toast" id="watchListToast" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-header header-popup">
+    <img src="images/mvslogo_nobg.png" style="width: 24px; height: 24px;" class="rounded me-2" alt="...">
+    <strong class="me-auto" style="color: aliceblue;"> Movies and Series Tracker</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+  <div class="toast-body" id="toastMessage">
+    Successfully deleted an item from watchlist
+  </div>
+</div>
+</div>
+
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="menu.js"></script>
+    <script src="menu.js" defer></script>
   </body>
 </html>

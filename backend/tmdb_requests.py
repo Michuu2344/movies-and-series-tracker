@@ -124,8 +124,44 @@ def search_tv(query : str):
             
         })
     return results
+def get_trending_movies():
+    url = "https://api.themoviedb.org/3/trending/movie/week?language=en-US"
+    headers = {
+        "accept" : "application/json",
+        "Authorization" : f"Bearer {API_KEY}"
+    }
+    data = requests.get(url,headers=headers)
+    results = []
+    response = data.json()
+    poster_url = f"https://image.tmdb.org/t/p/w500"
+    for item in response['results']:
+        results.append({
+            "tmdb_id" : item['id'],
+            "media_type" : item['media_type'],
+            "poster" : f"{poster_url}{item['poster_path']}"
 
-        
+            
+        })
+    return results
+def get_trending_tv_shows():
+    url ="https://api.themoviedb.org/3/trending/tv/week?language=en-US"
+    headers = {
+            "accept" : "application/json",
+            "Authorization" : f"Bearer {API_KEY}"
+    }
+    data = requests.get(url,headers=headers)
+    results = []
+    response = data.json()
+    poster_url = f"https://image.tmdb.org/t/p/w500"
+    for item in response['results']:
+        results.append({
+            "tmdb_id" : item['id'],
+            "media_type" : item['media_type'],
+            "poster" : f"{poster_url}{item['poster_path']}"
+    
+                
+        })
+    return results
 
-
-
+def get_popular_tv_shows():
+    pass

@@ -27,7 +27,15 @@ homeSearch.addEventListener("submit" , (e)=>{
   }
   window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
 })
+function showToast(message){
+  document.getElementById("toastMessage").textContent = message;
 
+  const toastElement = document.getElementById("watchListToast");
+
+  const toast = new bootstrap.Toast(toastElement);
+  
+  toast.show()
+};
 async function showDetails(tmdbId, mediaType) {
   
   
@@ -102,6 +110,36 @@ try{
     console.error("Error fetching details",error)
   }
 };
+async function displayTrendingMovies(){
+  const container = document.getElementById("trendingMovies");
+  
+  const template = document.getElementById("trendingMoviesTemplate");
+  try{
+    const response = await fetch("http://127.0.0.1:8000/movies/trending",
+    );
+    
+    if(!response.ok){
+      console.log("Error dispaying trending movies");
+    };
+    const movies = await response.json();
+    const five_movies = movies.slice(0,5)
+    container.innerHTML ="";
+    five_movies.forEach(item => {
+      const clone = template.content.cloneNode(true);
+
+      const poster = clone.querySelector(".movie-poster");
+      poster.src = item.poster;
+
+
+      container.appendChild(clone);
+
+    });
+  }
+  catch(error){
+    console.error(error);
+  }
+
+};
 function displayResults(results, mediaTypeValue) {
   const resultsdiv = document.getElementById("results");
   resultsdiv.innerHTML = "";
@@ -147,23 +185,4 @@ function displayResults(results, mediaTypeValue) {
     resultsdiv.append(clone);
   });
 };
-document.getElementById("searchForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const search_query = document.getElementById("search_watchlist").value;
-    
-    const mediaTypeValue = document.querySelector('input[name="mediatype"]:checked').value;
-    const url = `http://127.0.0.1:8000/search?query=${encodeURIComponent(search_query)}&media_type=${mediaTypeValue}`;
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        
-      });
-      if (response.ok) {
-        const data = await response.json();
-
-        displayResults(data, mediaTypeValue);
-      }
-    } catch (error) {
-      console.log("Error:", error);
-    }
-  })
+displayTrendingMovies();
