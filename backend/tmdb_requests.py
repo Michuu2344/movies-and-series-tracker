@@ -143,6 +143,25 @@ def get_trending_movies():
             
         })
     return results
+def get_popular_movies():
+    url ="https://api.themoviedb.org/3/movie/popular?language=en-US&page=1"
+    headers = {
+            "accept" : "application/json",
+            "Authorization" : f"Bearer {API_KEY}"
+    }
+    data = requests.get(url,headers=headers)
+    results = []
+    response = data.json()
+    poster_url = f"https://image.tmdb.org/t/p/w500"
+    for item in response['results']:
+        results.append({
+            "tmdb_id" : item['id'],
+            "media_type" : "movie",
+            "poster" : f"{poster_url}{item['poster_path']}"
+    
+                
+        })
+    return results
 def get_trending_tv_shows():
     url ="https://api.themoviedb.org/3/trending/tv/week?language=en-US"
     headers = {
@@ -164,4 +183,23 @@ def get_trending_tv_shows():
     return results
 
 def get_popular_tv_shows():
-    pass
+    url ="https://api.themoviedb.org/3/tv/popular?language=en-US&page=1"
+    headers = {
+            "accept" : "application/json",
+            "Authorization" : f"Bearer {API_KEY}"
+    }
+    data = requests.get(url,headers=headers)
+    results = []
+    response = data.json()
+    poster_url = f"https://image.tmdb.org/t/p/w500"
+    for item in response['results']:
+        results.append({
+            "tmdb_id" : item['id'],
+            "media_type" : "tv",
+            "poster" : f"{poster_url}{item['poster_path']}"
+    
+                
+        })
+    return results
+
+

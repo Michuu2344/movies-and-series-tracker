@@ -267,7 +267,6 @@ def addItemFavourites(tmdb_id : int, user_id : int,media_type : str,isFavourite 
         db_name = DATABASE_URL
     conn = psycopg2.connect(db_name)
     cur = conn.cursor()
-    # jesli nie ma itemu na watchliscie to dodajemy
     try:
         cur.execute('''UPDATE watchlist SET is_favourite = %s WHERE user_id = %s AND tmdb_id = %s AND media_type = %s''',
                     (isFavourite,user_id,tmdb_id,media_type,))

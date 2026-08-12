@@ -146,96 +146,36 @@
     
         
 <!-- Popular Movies -->
-
 <div class="container mb-5">
 
     <h2 class="section-title">
         🎬 Popular Movies
     </h2>
 
-    <div class="row g-4">
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
+    <div id="popularMovies" class="row g-4">
+    
     </div>
+<!-- Trending TV -->
+  <div class="container mb-5">
 
-</div>
+    <h2 class="section-title">
+        🔥 Trending TV Shows
+    </h2>
 
+    <div id="trendingTvShows" class="row g-4">
+    
+    </div>
 <!-- Popular TV -->
-
-<div class="container mb-5">
+  <div class="container mb-5">
 
     <h2 class="section-title">
         📺 Popular TV Shows
     </h2>
 
-    <div class="row g-4">
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="movie-card">
-                <div class="placeholder">
-                    Poster
-                </div>
-            </div>
-        </div>
-
+    <div id="popularTvShows" class="row g-4">
+    
     </div>
 
-</div>
 
 
 
@@ -244,6 +184,39 @@
 
 
 <template id="trendingMoviesTemplate">
+<div class="col movie-column">
+            <div class="movie-card h-100">
+                <img
+              class="img-fluid movie-poster"
+              alt="posterPicture"
+              style="min-height: 180px"
+            />
+</div>
+</div>    
+</template>
+<template id="popularMoviesTemplate">
+<div class="col movie-column">
+            <div class="movie-card h-100">
+                <img
+              class="img-fluid movie-poster"
+              alt="posterPicture"
+              style="min-height: 180px"
+            />
+</div>
+</div>    
+</template>
+<template id="popularTvTemplate">
+<div class="col movie-column">
+            <div class="movie-card h-100">
+                <img
+              class="img-fluid movie-poster"
+              alt="posterPicture"
+              style="min-height: 180px"
+            />
+</div>
+</div>    
+</template>
+<template id="trendingTvTemplate">
 <div class="col movie-column">
             <div class="movie-card h-100">
                 <img

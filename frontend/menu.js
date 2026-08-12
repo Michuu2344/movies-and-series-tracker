@@ -110,25 +110,61 @@ try{
     console.error("Error fetching details",error)
   }
 };
+
+async function displayPopularMovies(){
+    const container = document.getElementById("popularMovies");
+    const template = document.getElementById("popularMoviesTemplate");
+
+    try{
+      url = "http://127.0.0.1:8000/movies/popular"
+      const response = await fetch(url);
+
+      if(!response.ok){
+        console.log("Error displaying popular movies");
+        return;
+      }
+      const data = await response.json();
+      const popularMovies = data.slice(0,5);
+      container.innerHTML = "";
+      popularMovies.forEach(item => {
+        const clone = template.content.cloneNode(true);
+        
+        const poster = clone.querySelector(".movie-poster");
+        if(poster){
+          poster.src = item.poster;
+        }
+        container.appendChild(clone);
+      });
+    }
+    catch(error){
+      console.log("Something went wrong",error)
+    }
+};
+
+
 async function displayTrendingMovies(){
   const container = document.getElementById("trendingMovies");
   
   const template = document.getElementById("trendingMoviesTemplate");
   try{
-    const response = await fetch("http://127.0.0.1:8000/movies/trending",
-    );
+    url= "http://127.0.0.1:8000/movies/trending"
+    const response = await fetch(url);
     
     if(!response.ok){
-      console.log("Error dispaying trending movies");
+      console.log("Error displaying trending movies");
+      return;
     };
-    const movies = await response.json();
-    const five_movies = movies.slice(0,5)
+    const data = await response.json();
+    const trendingMovies = data.slice(0,5)
     container.innerHTML ="";
-    five_movies.forEach(item => {
+    trendingMovies.forEach(item => {
       const clone = template.content.cloneNode(true);
 
       const poster = clone.querySelector(".movie-poster");
-      poster.src = item.poster;
+      if(poster){
+        poster.src = item.poster;
+      }
+      
 
 
       container.appendChild(clone);
@@ -140,49 +176,71 @@ async function displayTrendingMovies(){
   }
 
 };
-function displayResults(results, mediaTypeValue) {
-  const resultsdiv = document.getElementById("results");
-  resultsdiv.innerHTML = "";
+async function displayPopularTvShows(){
+    const container = document.getElementById("popularTvShows");
+    const template = document.getElementById("popularTvTemplate");
 
-  if (!results || results.length === 0) {
-    displayresultsdiv.innerHTML =
-      "<p class=' text-center mt-4'>No results found<p>";
-    return;
-  }
-  const template = document.getElementById("movieCardTemplate");
-  if(!template) {
-    console.error("No element template found");
-    return;
-  }
-  
-  results.forEach((item) => {
-    const clone = template.content.cloneNode(true);
-    clone.querySelector(".movie-title").textContent = item.name;
-    clone.querySelector(".movie-date").textContent = item.release_date;
-    clone.querySelector(".movie-poster").src = item.poster;
-    clone.querySelector(".movie-rating").textContent = item.rating;
-    
+    try{
+      url = "http://127.0.0.1:8000/tv/popular"
+      const response = await fetch(url);
 
-    const badge = clone.querySelector(".movie-badge");
-    badge.textContent = mediaTypeValue === "movie" ? "🎬 Movie" : "📺 TV Series";
-    badge.classList.add(mediaTypeValue === "movie"? "bg-primary":"bg-success");
-
-    const mainRow = clone.querySelector(".card-row");
-    mainRow.onclick = () => showDetails(item.tmdb_id,mediaTypeValue)
-
-    const btn = clone.querySelector(".watchlist-btn");
-    if (btn) {
-        btn.onclick = (e) => {
-            
-         
-
-            console.log("Dodaję do bazy TMDB ID:", item.tmdb_id);
-            
-        };
-      };
-
-    
-    resultsdiv.append(clone);
-  });
+      if(!response.ok){
+        console.log("Error displaying popular movies");
+        return;
+      }
+      const data = await response.json();
+      const popularMovies = data.slice(0,5);
+      container.innerHTML = "";
+      popularMovies.forEach(item => {
+        const clone = template.content.cloneNode(true);
+        
+        const poster = clone.querySelector(".movie-poster");
+        if(poster){
+          poster.src = item.poster;
+        }
+        container.appendChild(clone);
+      });
+    }
+    catch(error){
+      console.log("Something went wrong",error)
+    }
 };
+async function displayTrendingTvShows(){
+    const container = document.getElementById("trendingTvShows");
+    const template = document.getElementById("trendingTvTemplate");
+
+    try{
+      url = "http://127.0.0.1:8000/tv/popular"
+      const response = await fetch(url);
+
+      if(!response.ok){
+        console.log("Error displaying popular movies");
+        return;
+      }
+      const data = await response.json();
+      const popularMovies = data.slice(0,5);
+      container.innerHTML = "";
+      popularMovies.forEach(item => {
+        const clone = template.content.cloneNode(true);
+        
+        const poster = clone.querySelector(".movie-poster");
+        if(poster){
+          poster.src = item.poster;
+        }
+        container.appendChild(clone);
+      });
+    }
+    catch(error){
+      console.log("Something went wrong",error)
+    }
+};
+
+
+
+
+
+
 displayTrendingMovies();
+displayPopularMovies();
+displayPopularTvShows();
+displayTrendingTvShows();
