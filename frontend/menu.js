@@ -116,7 +116,7 @@ async function displayPopularMovies(){
     const template = document.getElementById("popularMoviesTemplate");
 
     try{
-      url = "http://127.0.0.1:8000/movies/popular"
+      const url = "http://127.0.0.1:8000/movies/popular"
       const response = await fetch(url);
 
       if(!response.ok){
@@ -147,7 +147,7 @@ async function displayTrendingMovies(){
   
   const template = document.getElementById("trendingMoviesTemplate");
   try{
-    url= "http://127.0.0.1:8000/movies/trending"
+    const url= "http://127.0.0.1:8000/movies/trending"
     const response = await fetch(url);
     
     if(!response.ok){
@@ -181,7 +181,7 @@ async function displayPopularTvShows(){
     const template = document.getElementById("popularTvTemplate");
 
     try{
-      url = "http://127.0.0.1:8000/tv/popular"
+      const url = "http://127.0.0.1:8000/tv/popular"
       const response = await fetch(url);
 
       if(!response.ok){
@@ -210,7 +210,7 @@ async function displayTrendingTvShows(){
     const template = document.getElementById("trendingTvTemplate");
 
     try{
-      url = "http://127.0.0.1:8000/tv/popular"
+      const url = "http://127.0.0.1:8000/tv/popular"
       const response = await fetch(url);
 
       if(!response.ok){

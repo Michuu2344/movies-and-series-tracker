@@ -60,7 +60,7 @@ def format_media_row(row):
     return {"tmdb_id":row[0],
             "media_type": row[1],
             "title":row[2],
-            "year":year,
+            "release_date":year,
             "status":row[4],
             "rating":row[5],
             "poster_url":f"https://image.tmdb.org/t/p/w500{row[6]}" if row[6] is not None else None,
@@ -274,5 +274,3 @@ def addItemFavourites(tmdb_id : int, user_id : int,media_type : str,isFavourite 
     finally:
         cur.close()
         conn.close()
-
-

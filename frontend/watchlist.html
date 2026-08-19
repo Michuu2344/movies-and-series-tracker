@@ -65,7 +65,7 @@
             </div>
           </form>
            <div class="ms-auto d-flex align-items-center gap-3">
-          <a class="nav-link register-text" href="index.html">Sign in</a>
+          <a class="nav-link register-text" id="authLink" href="index.html">Sign in</a>
           <a class="nav-link" href="#"><img class="profilepic" src="images/profile_img.png"  alt="profile"></a>
             </div>
         </div>
@@ -92,13 +92,17 @@
               <div class="d-flex justify-content-between align-items-center gap-3 mb-3  ">
               <h2 class="h4 mb-2 fw-bold movie-title">Tytuł</h2>
               <div class="d-flex align-items-center gap-2">
-                <img
-                  src="https://t3.ftcdn.net/jpg/01/21/64/88/360_F_121648819_ZQ0tZ6tjLzxim1SG7CQ86raBw4sglCzB.jpg"
-                  style="width: 30px; height: 30px; object-fit: contain"
-                  alt="rating"
-                />
-
-                <p class="m-0 fw-bold fs-5 movie-rating">0.0</p>
+                <button
+                class="btn d-flex align-items-center justify-content-center fw-bold fs-4 watchlist-favourite-btn"
+                style="width: 45px; height: 45px; border-radius: 10px"
+              >
+                <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="100" height="100">
+  <path class="heart-svg"  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+</svg>
+              </button>
+                
+                
+                
               </div>
               </div>
               <div class="d-flex align-items-center gap-0 mb-0">
@@ -124,15 +128,14 @@
 
               </div>
             <div class="d-flex justify-content-between align-items-center mt-2">
-            
-              <button
-                class="btn d-flex align-items-center justify-content-center fw-bold fs-4 watchlist-favourite-btn"
-                style="width: 45px; height: 45px; border-radius: 10px"
-              >
-                <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="100" height="100">
-  <path class="heart-svg"  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-</svg>
-              </button>
+              <img
+                  src="https://t3.ftcdn.net/jpg/01/21/64/88/360_F_121648819_ZQ0tZ6tjLzxim1SG7CQ86raBw4sglCzB.jpg"
+                  style="width: 30px; height: 30px; object-fit: contain"
+                  alt="rating"
+                />
+
+                <p class="m-0 fw-bold fs-5 movie-rating">0.0</p>
+              
               <button
                 class="btn d-flex align-items-center justify-content-center fw-bold fs-4 watchlist-remove-btn"
                 style="width: 45px; height: 45px; border-radius: 10px"

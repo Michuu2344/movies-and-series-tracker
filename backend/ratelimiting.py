@@ -16,7 +16,7 @@ class TokenBucket:
         self.interval = interval
 
         self.tokens = max_tokens
-        self.refilled_at = time.time()
+        self.refilled_at = time.monotonic()
         self.lock = threading.Lock()
     def _refill(self):
 

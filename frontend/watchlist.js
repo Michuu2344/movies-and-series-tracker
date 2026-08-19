@@ -21,6 +21,55 @@ function showToast(message){
   
   toast.show()
 };
+
+async function logout() {
+  
+  const url = "http://127.0.0.1:8000/auth/logout"
+  const response = await fetch(url,{
+    method : "POST",
+    headers : {
+      credentials : "include"
+    }
+  });
+  if(response.ok){
+    window.location.href = "index.html";
+  }
+  
+  
+};
+async function updateNavBar() {
+  const authLink = document.getElementById("authLink");
+  
+  try{
+
+  
+  const url = "http://127.0.0.1:8000/auth/me";
+  const response = await fetch(url,{
+    credentials : "include"
+  })
+  if(response.ok){
+    authLink.textContent = "Log Out";
+    authLink.href = "#"
+
+    authLink.onclick = async (e) => {
+      e.preventDefault();
+      await logout();
+
+    };
+
+
+  }
+  else{
+    authLink.textContent = "Sign in";
+    authLink.href = "index.html";
+
+  }
+} catch(error){
+  console.error("Could not check authentication", error)
+}
+
+  
+};
 async function toggleFavourite(tmdbId,mediaType,isFavourite) {
     try{
     isFavouriteData = {
@@ -164,7 +213,7 @@ async function loadWatchlist() {
       }
       const release_date = clone.querySelector(".movie-date");
       if (release_date) {
-        release_date.textContent = item.year;
+        release_date.textContent = item.release_date;
       }
 
       const badge = clone.querySelector(".movie-badge");
@@ -247,4 +296,4 @@ async function loadWatchlist() {
   }
 }
 loadWatchlist();
-
+updateNavBar();

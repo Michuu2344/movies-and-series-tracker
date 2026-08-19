@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="detailsstyle.css" rel="stylesheet">
+</head>
+<body>
+    
+    <nav class="navbar navbar-expand-lg custom-nav" data-bs-theme="dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="menu.html">
+          <img src="images/mvslogo_nobg.png" alt="" width="50" height="auto" style="background-color: #1F2937;border-radius: 12px ;" />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="menu.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="browse.html">Explore</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link"  href="watchlist.html">Watchlist</a>
+            </li>
+            
+          </ul>
+          <form id="navSearchForm" class="d-flex" role="search">
+            <div class="custom-search-group">
+              <select
+                class="custom-select"
+                id="navMediaType"
+                style="max-width: 150px"
+              >
+                <option value="movie" selected>🎥 Movies</option>
+                <option value="tv">📺 TV Series</option>
+              </select>
+              <div class="search-input-wrapper">
+              <input
+                class="custom-input"
+                id="navSearchInput"
+                type="search"
+                placeholder="Search..."
+                aria-label="Search"
+              />
+                
+              <button class="custom-btn" type="submit" id="navSearchBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+          </svg>
+              </button>
+              </div>
+            </div>
+          </form>
+           <div class="ms-auto d-flex align-items-center gap-3">
+          <a class="nav-link register-text" id="authLink" href="index.html">Sign in</a>
+          <a class="nav-link" href="#"><img class="profilepic" src="images/profile_img.png"  alt="profile"></a>
+            </div>
+        </div>
+      </div>
+    </nav>
+    
+<main class="details-page">
+    <section class="details-hero">
+
+    <!-- TYTUŁ + RATING -->
+    <div class="details-header">
+
+        <div class="title-section">
+            <h1 class="movie-title">The Mentalist</h1>
+
+            <div class="movie-meta">
+            </div>
+        </div>
+
+        <div class="rating-section">
+          <div class="tmdb-rating">
+            <span>TMDB RATING</span>
+                
+                <div class="rating-value">
+                    <img
+                        src="https://t3.ftcdn.net/jpg/01/21/64/88/360_F_121648819_ZQ0tZ6tjLzxim1SG7CQ86raBw4sglCzB.jpg"
+                        alt="TMDB rating"
+                            >
+                  <strong class="rating-tmdb-value"></strong>
+                </div>
+            </div>
+
+            <div class="your-rating">
+              <span>Your rating</span>
+              <button class="rate-button" id="ratebutton" aria-label="Rate this movie"> 
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="28"
+                        height="28"
+                        >
+                        <polygon
+                            points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            />
+                            </svg>
+
+              </button>
+
+
+
+            </div>
+                </div>
+            </div>
+
+
+
+    <!-- POSTER + BACKDROP + ACTIONS -->
+    <div class="media-section">
+
+        <!-- POSTER -->
+        <div class="poster-container">
+
+            <img
+                class="details-poster"
+                src=""
+                alt="Poster image"
+            >
+
+        </div>
+
+
+        <!-- BACKDROP -->
+        <div class="backdrop-container">
+
+            <img
+                class="details-backdrop"
+                src=""
+                alt="Backdrop image"
+            >
+
+            <button class="trailer-button">
+                ▶ Watch trailer
+            </button>
+
+        </div>
+
+
+        <!-- PRAWA STRONA -->
+        <div class="details-actions">
+
+            <button class="watchlist-button">
+                ＋ Add to Watchlist
+            </button>
+
+            <button class="favourite-button">
+                ♡ Favourite
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- GATUNKI -->
+    <div class="genres">
+
+        <span class="genre">Crime</span>
+        <span class="genre">Drama</span>
+        <span class="genre">Mystery</span>
+
+    </div>
+
+
+    <!-- OPIS -->
+    <p class="overview">
+        
+    </p>
+
+</section>
+<section class="details-section">
+
+    <h2>Details</h2>
+
+    <div class="info-grid">
+
+        
+
+      </div>
+
+</section>
+    
+</div>
+<section class="details-section">
+    <h2>Credits</h2>
+      <div class="credits">
+        
+
+            </div>
+
+        </section>
+        <section class="details-section">
+
+            <div class="section-header">
+                <h2>You may also like</h2>
+
+                <button class="see-all-button">
+                    See all
+                </button>
+            </div>
+
+            <div
+                class="recommendations-grid"
+                id="recommendationsContainer"
+            >
+
+
+            </div>
+
+        </section>
+    
+      </main>
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="details.js"></script>
+</body>
+</html>

@@ -21,7 +21,7 @@ create_user_db()
 create_watchlist()
 create_media_cache()
 app = FastAPI()
-limiter = RateLimiterStore(max_tokens=30,refill_rate=5,interval=1.0)
+limiter = RateLimiterStore(max_tokens=50,refill_rate=1,interval=1.2)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://127.0.0.1:5500","http://localhost:5500"],
@@ -86,6 +86,17 @@ async def login_for_access_token(response : Response,form_data : OAuth2PasswordR
     set_auth_cookie(response,access_token)
 
     return {"message":"Logged in successfully"}
+@app.post("/auth/logout")
+async def logout(reponse : Response):
+    reponse.delete_cookie(
+        key="access_token",
+        path="/"
+    )
+    return {"message": "Successfully logged out"}
+
+@app.get("/auth/me")
+async def get_current_user_info(user : Annotated[User,Depends(get_current_user)]):
+    return {"username":user.username}
 
 @app.get("/")
 async def home():

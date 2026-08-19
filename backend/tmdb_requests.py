@@ -20,7 +20,9 @@ def get_details_tv(tmdb_id : int):
     data3 = requests.get(url3,headers=headers)
     cast = data3.json()
     poster_path = tv['poster_path']
+    backdrop_path = tv['backdrop_path']
     poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}"
+    backdrop_url = f"https://image.tmdb.org/t/p/w500{backdrop_path}"
     people = []
     for x in cast['cast']:
         people.append({
@@ -33,6 +35,7 @@ def get_details_tv(tmdb_id : int):
     
     return {"tmdb_id":tmdb_id,
             "name": (tv['name']),
+            "original_name" : tv['original_name'],
             "release_date":(tv['first_air_date']),
             "overview":(tv['overview']),
             "genre": tv['genres'][0:2],
@@ -40,7 +43,15 @@ def get_details_tv(tmdb_id : int):
             "most_popular_cast_members": sorted_actors,
             "poster": poster_url ,
             "vote_count" : tv['vote_count'],
-            "number_of_seasons" : tv['number_of_seasons']
+            "number_of_seasons" : tv['number_of_seasons'],
+            "number_of_episodes" : tv['number_of_episodes'],
+            "episode_run_time" : tv['episode_run_time'],
+            "backdrop" : backdrop_url,
+            "original_language" :tv['original_language'],
+            "first_air_date" : tv['first_air_date'],
+            "last_air_date" : tv['last_air_date'],
+            "created_by" : tv['created_by'],
+            "origin_country" : tv["origin_country"][0]
             }
     
 def get_details_movie(tmdb_id : int):
@@ -68,6 +79,7 @@ def get_details_movie(tmdb_id : int):
     poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}"
     return {"tmdb_id": tmdb_id,
             "name": (movie['title']),
+            "original_name" : movie['original_title'],
             "release_date":(movie['release_date']),
             "overview":(movie['overview']),
             "genre": movie['genres'][0:2],
@@ -75,7 +87,12 @@ def get_details_movie(tmdb_id : int):
             "most_popular_cast_members": sorted_actors,
             "poster": poster_url ,
             "vote_count" : movie['vote_count'],
-            "number_of_seasons" : movie['number_of_seasons']
+            "backdrop_path" : movie['backdrop_path'],
+            "revenue" : movie['revenue'],
+            "runtime" : movie['runtime'],
+            "origin_country" : movie['origin_country'][0],
+            "original_language" : movie['original_language']
+
             }
 def search_movie(query : str):
     url = f"https://api.themoviedb.org/3/search/movie?query={query}&include_adult=false"
@@ -97,7 +114,6 @@ def search_movie(query : str):
             "poster":f"{poster_url}{movie['poster_path']}",
             "rating":f"{movie['vote_average']:.2f}",
             "vote_count" : movie['vote_count'],
-            "number_of_seasons" : movie['number_of_seasons']
         })
     return results
 def search_tv(query : str):
@@ -125,7 +141,7 @@ def search_tv(query : str):
         })
     return results
 def get_trending_movies():
-    url = "https://api.themoviedb.org/3/trending/movie/week?language=en-US"
+    url = "https://api.themoviedb.org/3/trending/movie/day?language=en-US"
     headers = {
         "accept" : "application/json",
         "Authorization" : f"Bearer {API_KEY}"
@@ -163,7 +179,7 @@ def get_popular_movies():
         })
     return results
 def get_trending_tv_shows():
-    url ="https://api.themoviedb.org/3/trending/tv/week?language=en-US"
+    url ="https://api.themoviedb.org/3/trending/tv/day?language=en-US"
     headers = {
             "accept" : "application/json",
             "Authorization" : f"Bearer {API_KEY}"
