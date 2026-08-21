@@ -1,3 +1,4 @@
+const API_URL = "http://localhost:8000";
 document
   .getElementById("registerForm")
   .addEventListener("submit", async function (e) {
@@ -10,7 +11,7 @@ document
       password: document.getElementById("password").value,
     };
 
-    const response = await fetch("http://127.0.0.1:8000/auth/register", {
+    const response = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

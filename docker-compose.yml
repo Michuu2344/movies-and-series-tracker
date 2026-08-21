@@ -16,6 +16,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: pgadmin123
@@ -29,6 +30,34 @@ services:
         condition: service_healthy
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+  
+  backend:
+    build: 
+     context: .
+     dockerfile: backend/Dockerfile
+    container_name : mvs_tracker_api
+    ports:
+      - "8000:8000"
+    env_file:
+    - ./backend/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app/backend
+    working_dir: /app
+
+
+    
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mvs_tracker_frontend
+    ports: 
+      - "5500:80"
+    depends_on:
+      - backend
 volumes:
   postgres_data:
   pgadmin_data:

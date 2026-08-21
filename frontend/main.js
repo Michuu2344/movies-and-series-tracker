@@ -1,3 +1,4 @@
+const API_URL = "http://localhost:8000";
 document
   .getElementById("loginForm")
   .addEventListener("submit", async function (e) {
@@ -10,7 +11,7 @@ document
     formData.append("username", username);
     formData.append("password", password);
 
-    const response = await fetch("http://127.0.0.1:8000/auth/login", {
+    const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       credentials: "include",

@@ -1,17 +1,25 @@
+
+const API_URL = "http://localhost:8000";
+
+
 const searchForm = document.getElementById("navSearchForm");
 searchForm.addEventListener("submit", (e) => {
   e.preventDefault();
-
   const query = document.getElementById("navSearchInput").value.trim();
 
   const mediatype = document.getElementById("navMediaType").value;
+  
 
   if (!query) {
     return;
   }
   window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
 });
+//
+function redirectDetails(tmdbId,mediaType){
+  window.location.href = `details.html?tmdb_id=${encodeURIComponent(tmdbId)}&media_type=${mediaType}`;
 
+}
 function showToast(message){
   document.getElementById("toastMessage").textContent = message;
 
@@ -24,7 +32,7 @@ function showToast(message){
 
 async function logout() {
   
-  const url = "http://127.0.0.1:8000/auth/logout"
+  const url = `${API_URL}/auth/logout`
   const response = await fetch(url,{
     method : "POST",
     headers : {
@@ -43,7 +51,7 @@ async function updateNavBar() {
   try{
 
   
-  const url = "http://127.0.0.1:8000/auth/me";
+  const url = `${API_URL}/auth/me`;
   const response = await fetch(url,{
     credentials : "include"
   })
@@ -76,7 +84,7 @@ async function toggleFavourite(tmdbId,mediaType,isFavourite) {
       "is_favourite": isFavourite
     };
     const response  = await fetch(
-      `http://127.0.0.1:8000/watchlist/${tmdbId}/favourites?media_type=${mediaType}`,
+      `${API_URL}/watchlist/${tmdbId}/favourites?media_type=${mediaType}`,
       {
         method: "PATCH",
         credentials: "include",
@@ -121,7 +129,7 @@ async function updateStatus(status,tmdb_id,media_type){
       "status": status
     }
     const response  = await fetch(
-      `http://127.0.0.1:8000/watchlist/${tmdb_id}?media_type=${media_type}`,
+      `${API_URL}/watchlist/${tmdb_id}?media_type=${media_type}`,
       {
         method: "PATCH",
         credentials: "include",
@@ -146,7 +154,7 @@ async function updateStatus(status,tmdb_id,media_type){
 async function removeFromWatchlist(tmdb_id, media_type = "movie") {
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/watchlist/${tmdb_id}?media_type=${media_type}`,
+      `${API_URL}/watchlist/${tmdb_id}?media_type=${media_type}`,
       {
         method: "DELETE",
         credentials: "include",
@@ -171,7 +179,7 @@ async function loadWatchlist() {
     "<p class='text-center fs-5'>Ładowanie watchlisty...</p>";
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/watchlist", {
+    const response = await fetch(`${API_URL}/watchlist`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -239,7 +247,9 @@ async function loadWatchlist() {
 
         statusButton.dataset.currentStatus = item.status;
       }; 
-      
+      const mainRow = clone.querySelector(".card-row");
+      mainRow.onclick = () => redirectDetails(item.tmdb_id,item.media_type)
+
       const statusLinks = clone.querySelectorAll(".status-item")
 
       statusLinks.forEach((link)=> {

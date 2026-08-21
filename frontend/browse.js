@@ -1,7 +1,8 @@
+const API_URL = "http://localhost:8000";
 async function fetch_search_results(search_query, mediaTypeValue) {
   if (search_query) {
     try {
-      const url = `http://127.0.0.1:8000/search?query=${encodeURIComponent(search_query)}&media_type=${mediaTypeValue}`;
+      const url = `${API_URL}/search?query=${encodeURIComponent(search_query)}&media_type=${mediaTypeValue}`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -19,10 +20,14 @@ async function fetch_search_results(search_query, mediaTypeValue) {
     return null;
   }
 }
+function redirectDetails(tmdbId,mediaType){
+  window.location.href = `details.html?tmdb_id=${encodeURIComponent(tmdbId)}&media_type=${mediaType}`;
+
+}
 async function showDetails(tmdbId, mediaType) {
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/media/${tmdbId}?media_type=${mediaType}`,
+      `${API_URL}/media/${tmdbId}?media_type=${mediaType}`,
       {
         method: "GET",
       },
@@ -84,7 +89,7 @@ async function showDetails(tmdbId, mediaType) {
           status : "want_to_watch",
           rating : null
         }
-        const response = await fetch("http://127.0.0.1:8000/watchlist",{
+        const response = await fetch(`${API_URL}/watchlist`,{
           method : "POST",
           headers : {
             "Content-Type" : "application/json"
@@ -117,7 +122,7 @@ async function showDetails(tmdbId, mediaType) {
     console.error("Error fetching details", error);
   }
 }
-function displayResults(results, mediaTypeValue) {
+async function displayResults(results, mediaTypeValue) {
   const resultsdiv = document.getElementById("results");
   resultsdiv.innerHTML = "";
 
@@ -149,7 +154,8 @@ function displayResults(results, mediaTypeValue) {
     );
 
     const mainRow = clone.querySelector(".card-row");
-    mainRow.onclick = () => showDetails(item.tmdb_id, mediaTypeValue);
+    mainRow.onclick = () => redirectDetails(item.tmdb_id,mediaTypeValue);
+      
 
     const btn = clone.querySelector(".watchlist-btn");
     if (btn) {
@@ -163,7 +169,7 @@ function displayResults(results, mediaTypeValue) {
           is_favourite : false
         };
     try {
-      const response = await fetch("http://127.0.0.1:8000/watchlist",{
+      const response = await fetch(`${API_URL}/watchlist`,{
         method : "POST",
         headers : {
           "Content-Type" : "application/json",

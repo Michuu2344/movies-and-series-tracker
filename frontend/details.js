@@ -1,11 +1,11 @@
-
+const API_URL = "http://localhost:8000";
 document.addEventListener("DOMContentLoaded", async () =>{
 
     const urlParams = new URLSearchParams(window.location.search);
 
     const tmdb_id = urlParams.get("tmdb_id");
 
-    const mediaType = urlParams.get("media-type");
+    const mediaType = urlParams.get("media_type");
 
     if(!tmdb_id || !mediaType){
         // document.querySelector(".details-content").style.display = "none";
@@ -16,6 +16,23 @@ document.addEventListener("DOMContentLoaded", async () =>{
     }
     await loadDetails(tmdb_id,mediaType);
 
+});
+
+
+
+
+const searchForm = document.getElementById("navSearchForm");
+searchForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const query = document.getElementById("navSearchInput").value.trim();
+
+  const mediatype = document.getElementById("navMediaType").value;
+
+  if (!query) {
+    return;
+  }
+  window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
 });
 function displayMeta(data,mediaType){
     const meta = document.querySelector(".movie-meta");
@@ -156,7 +173,7 @@ function displayDetails(data,mediaType){
     genres.forEach(genre => {
         const span = document.createElement("span");
         span.classList.add("genre");
-        span.textContent = genre;
+        span.textContent = genre.name;
         genresContainer.appendChild(span);
         
     });
@@ -171,7 +188,7 @@ function displayDetails(data,mediaType){
 async function loadDetails(tmdbId,mediaType) {
     
 try{
-    const response = await fetch(`http://127.0.0.1:8000/media/${tmdbId}?media_type=${mediaType}`,
+    const response = await fetch(`${API_URL}/media/${tmdbId}?media_type=${mediaType}`,
         {method : "GET"}
     );
     if(!response.ok){

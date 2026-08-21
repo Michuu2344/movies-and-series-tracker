@@ -1,5 +1,8 @@
+const API_URL = "http://localhost:8000";
+function redirectDetails(tmdbId,mediaType){
+  window.location.href = `details.html?tmdb_id=${encodeURIComponent(tmdbId)}&media_type=${mediaType}`;
 
-
+}
 const searchForm = document.getElementById("navSearchForm");
 
 searchForm.addEventListener("submit", (e)=>{
@@ -44,7 +47,7 @@ try{
 
   
   const response = await fetch(
-    `http://127.0.0.1:8000/media/${tmdbId}?media_type=${mediaType}`,{
+    `${API_URL}/media/${tmdbId}?media_type=${mediaType}`,{
     method : "GET"}
     
     
@@ -116,7 +119,7 @@ async function displayPopularMovies(){
     const template = document.getElementById("popularMoviesTemplate");
 
     try{
-      const url = "http://127.0.0.1:8000/movies/popular"
+      const url = `${API_URL}/movies/popular`
       const response = await fetch(url);
 
       if(!response.ok){
@@ -132,7 +135,9 @@ async function displayPopularMovies(){
         const poster = clone.querySelector(".movie-poster");
         if(poster){
           poster.src = item.poster;
-        }
+        }l
+        const movieCard = clone.querySelector(".movie-card");
+        movieCard.onclick = () => redirectDetails(item.tmdb_id,item.media_type);
         container.appendChild(clone);
       });
     }
@@ -147,7 +152,7 @@ async function displayTrendingMovies(){
   
   const template = document.getElementById("trendingMoviesTemplate");
   try{
-    const url= "http://127.0.0.1:8000/movies/trending"
+    const url= `${API_URL}/movies/trending`
     const response = await fetch(url);
     
     if(!response.ok){
@@ -164,7 +169,8 @@ async function displayTrendingMovies(){
       if(poster){
         poster.src = item.poster;
       }
-      
+      const movieCard = clone.querySelector(".movie-card");
+        movieCard.onclick = () => redirectDetails(item.tmdb_id,item.media_type);
 
 
       container.appendChild(clone);
@@ -181,7 +187,7 @@ async function displayPopularTvShows(){
     const template = document.getElementById("popularTvTemplate");
 
     try{
-      const url = "http://127.0.0.1:8000/tv/popular"
+      const url = `${API_URL}/tv/popular`
       const response = await fetch(url);
 
       if(!response.ok){
@@ -198,6 +204,8 @@ async function displayPopularTvShows(){
         if(poster){
           poster.src = item.poster;
         }
+        const tvCard = clone.querySelector(".movie-card");
+        tvCard.onclick = () => redirectDetails(item.tmdb_id,item.media_type);
         container.appendChild(clone);
       });
     }
@@ -210,7 +218,7 @@ async function displayTrendingTvShows(){
     const template = document.getElementById("trendingTvTemplate");
 
     try{
-      const url = "http://127.0.0.1:8000/tv/popular"
+      const url = `${API_URL}/tv/popular`
       const response = await fetch(url);
 
       if(!response.ok){
@@ -227,6 +235,8 @@ async function displayTrendingTvShows(){
         if(poster){
           poster.src = item.poster;
         }
+        const tvCard = clone.querySelector(".movie-card");
+        tvCard.onclick = () => redirectDetails(item.tmdb_id,item.media_type);
         container.appendChild(clone);
       });
     }
