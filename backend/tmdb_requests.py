@@ -6,6 +6,43 @@ from dotenv import load_dotenv
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
+
+def get_trailer_key(tmdb_id : int,media_type: str ="movie")-> str| None:
+
+    if media_type not in("movie","tv"):
+            raise ValueError("media_type value must be 'movie' or 'tv'")
+    headers = {
+            "accept" : "application/json",
+            "Authorization" : f"Bearer {API_KEY}"
+        }
+    
+    url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}/videos"
+    try:
+        response = requests.get(url,headers=headers,timeout=5)
+        response.raise_for_status()
+        data = response.json()
+    except requests.RequestException:
+        return None
+
+    results = data.get("results",[])
+
+    for video in results:
+        if video.get("site") == "YouTube" and video.get("type") =="Trailer" and video.get("official"):
+            return video.get("key")
+
+    for video in results:
+        if video.get("site") == "YouTube" and video.get("type") =="Trailer":
+            return video.get("key")
+
+    return None
+
+
+
+
+
+
+
+
 def get_details_tv(tmdb_id : int):
     headers = {
         "accept": "application/json",
@@ -19,6 +56,10 @@ def get_details_tv(tmdb_id : int):
     url3 = f"https://api.themoviedb.org/3/tv/{tmdb_id}/credits"
     data3 = requests.get(url3,headers=headers)
     cast = data3.json()
+
+
+
+
     poster_path = tv['poster_path']
     backdrop_path = tv['backdrop_path']
     poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}"
@@ -51,7 +92,8 @@ def get_details_tv(tmdb_id : int):
             "first_air_date" : tv['first_air_date'],
             "last_air_date" : tv['last_air_date'],
             "created_by" : tv['created_by'],
-            "origin_country" : tv["origin_country"][0]
+            "origin_country" : tv["origin_country"][0],
+            "trailer_key":get_trailer_key(tmdb_id,"tv")
             }
     
 def get_details_movie(tmdb_id : int):
@@ -64,9 +106,9 @@ def get_details_movie(tmdb_id : int):
     movie = data2.json()
     url3 = f"https://api.themoviedb.org/3/movie/{tmdb_id}/credits"
     data3 = requests.get(url3,headers=headers)
-    cast = data3.json()
+    response3 = data3.json()
     people = []
-    for x in cast['cast']:
+    for x in response3['cast']:
         people.append({
             "name":x['name'],
             "popularity": x['popularity'],
@@ -74,8 +116,20 @@ def get_details_movie(tmdb_id : int):
         })
     actors = sorted(people,key = lambda x: x['popularity'],reverse=True)
     sorted_actors = actors[:5]
-    poster_path = movie['poster_path']
     
+    poster_path = movie['poster_path']
+    crew_members = []
+    for x in response3['crew']:
+            crew_members.append({
+                "name":x['name'],
+                "popularity": x['popularity'],
+                "profile_path": x['profile_path']
+            })
+    crew_members_sorted = sorted(crew_members,key = lambda x: x['popularity'],reverse=True)
+    five_crew_members = crew_members_sorted[:5]
+
+    backdrop_path = movie['backdrop_path']
+    backdrop_url = f"https://image.tmdb.org/t/p/w500{backdrop_path}"
     poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}"
     return {"tmdb_id": tmdb_id,
             "name": (movie['title']),
@@ -87,11 +141,13 @@ def get_details_movie(tmdb_id : int):
             "most_popular_cast_members": sorted_actors,
             "poster": poster_url ,
             "vote_count" : movie['vote_count'],
-            "backdrop_path" : movie['backdrop_path'],
+            "backdrop" : backdrop_url,
             "revenue" : movie['revenue'],
             "runtime" : movie['runtime'],
             "origin_country" : movie['origin_country'][0],
-            "original_language" : movie['original_language']
+            "original_language" : movie['original_language'],
+            "crew" : five_crew_members,
+            "trailer_key" : get_trailer_key(tmdb_id,"movie")
 
             }
 def search_movie(query : str):
@@ -155,7 +211,6 @@ def get_trending_movies():
             "tmdb_id" : item['id'],
             "media_type" : item['media_type'],
             "poster" : f"{poster_url}{item['poster_path']}"
-
             
         })
     return results

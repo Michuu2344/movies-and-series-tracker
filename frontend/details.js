@@ -1,4 +1,10 @@
+let currentTmdbId = null;
+let currentMediaType = null;
+let isOnWatchlist = false;
 const API_URL = "http://localhost:8000";
+
+
+
 document.addEventListener("DOMContentLoaded", async () =>{
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -17,10 +23,6 @@ document.addEventListener("DOMContentLoaded", async () =>{
     await loadDetails(tmdb_id,mediaType);
 
 });
-
-
-
-
 const searchForm = document.getElementById("navSearchForm");
 searchForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -34,6 +36,7 @@ searchForm.addEventListener("submit", (e) => {
   }
   window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
 });
+
 function displayMeta(data,mediaType){
     const meta = document.querySelector(".movie-meta");
 
@@ -58,6 +61,21 @@ function displayMeta(data,mediaType){
         </div>`
     }
 }
+function openTrailerVideo(trailerKey){
+    const trailerButton = document.getElementById("trailer-button");
+    const backdropImage = document.getElementById("backdrop-image");
+    const trailerIframe = document.getElementById("trailer-iframe");
+
+    trailerButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        backdropImage.style.display = "none";
+        trailerButton.style.display = "none";
+
+        trailerIframe.src = `https://www.youtube.com/embed/${trailerKey}?autoplay=1`;
+        trailerIframe.style.display = "block";
+    });
+};
+
 function detailsSection(data,mediaType){
     const infoGridContainer = document.querySelector(".info-grid");
 
@@ -106,15 +124,24 @@ function detailsSection(data,mediaType){
 }
 
 function displayCredits(data,mediaType){
-
-    const stars = data.most_popular_cast_members || [];
-    const creators = data.created_by;
+    const stars = data.most_popular_cast_members;
+    
+    const creators = mediaType === "movie"
+    ? data.crew || []
+    : data.created_by || [];
     const credits = document.querySelector(".credits")
     credits.innerHTML = "";
     
     const creatorsSection = document.createElement("div");
+    
     creatorsSection.classList.add("credit-section");
-    creatorsSection.innerHTML = `<strong>Created by</strong>`;
+    if(mediaType ==="movie"){
+        creatorsSection.innerHTML = `<strong>Most popular crew members</strong>`;
+    }
+    else{
+        creatorsSection.innerHTML = `<strong>Created by</strong>`;
+    }
+    
 
     const creatorsList = document.createElement("div");
     creatorsList.classList.add("credits-list");
@@ -155,10 +182,49 @@ function displayCredits(data,mediaType){
 
 
 };
+
+
+
+
+async function loadDetails(tmdbId,mediaType) {
+    currentTmdbId = tmdbId;
+    currentMediaType = mediaType;
+try{
+    const response = await fetch(`${API_URL}/media/${tmdbId}?media_type=${mediaType}`,
+        {method : "GET"}
+    );
+    if(!response.ok){
+        throw new Error("Failed to display details");
+    }
+    const data = await response.json();
+    displayDetails(data,mediaType);
+    if(data.trailer_key){
+        openTrailerVideo(data.trailer_key);
+    }
+    try{
+    const watchlistResponse = await fetch(`${API_URL}/watchlist/${tmdbId}?media_type=${mediaType}`,{
+        method : "GET",
+        credentials : "include"
+    });
+    if (!watchlistResponse.ok){
+        throw new Error("Failed to check watchlist")
+    }
+
+    const watchlistStatus = await watchlistResponse.json();
+    updateWatchlistButton(watchlistStatus);
+   } 
+   catch (error) {
+            console.error("Watchlist check failed:", error);
+        }
+}
+   catch(error){
+    console.error(error)
+   }
+};
 function displayDetails(data,mediaType){
-
+    
     const year = mediaType === "movie" ? data.release_date : data.first_air_date;
-
+    
     document.querySelector(".movie-title").textContent = data.name;
     const genres = data.genre;
     displayMeta(data,mediaType);
@@ -178,28 +244,8 @@ function displayDetails(data,mediaType){
         
     });
 
+
+
     detailsSection(data,mediaType);
     displayCredits(data,mediaType);
 };
-
-
-
-
-async function loadDetails(tmdbId,mediaType) {
-    
-try{
-    const response = await fetch(`${API_URL}/media/${tmdbId}?media_type=${mediaType}`,
-        {method : "GET"}
-    );
-    if(!response.ok){
-        throw new Error("Failed to display details");
-    }
-    const data = await response.json();
-    displayDetails(data,mediaType);
-
-
-   } 
-   catch(error){
-    console.error(error)
-   }
-}

@@ -235,6 +235,9 @@ body{
 
     background-attachment:fixed;
 }
+.movie-badge{
+   color:#334155 ;
+}
 .watchlist-favourite-btn{
 
     background-color: white;

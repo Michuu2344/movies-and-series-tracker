@@ -80,7 +80,7 @@ async function updateNavBar() {
 };
 async function toggleFavourite(tmdbId,mediaType,isFavourite) {
     try{
-    isFavouriteData = {
+    const isFavouriteData = {
       "is_favourite": isFavourite
     };
     const response  = await fetch(

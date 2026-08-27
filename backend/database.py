@@ -125,7 +125,19 @@ def check_watchlist_item(item,user,db_name = None):
     else:
         conn.close()
         return False
-    
+def check_if_item_is_on_watchlist(tmdb_id,user_id,media_type,db_name=None):
+    if db_name is None:
+        db_name = DATABASE_URL
+    conn = psycopg2.connect(db_name)
+    cur = conn.cursor()
+    cur.execute('''SELECT 1 from watchlist WHERE user_id = %s AND tmdb_id = %s AND media_type = %s''',(user_id,tmdb_id,media_type))
+
+    if cur.fetchone():
+        conn.close()
+        return True
+    else:
+        conn.close()
+        return False
 def add_watchlist_item_db(item,user,db_name = None):
     if db_name is None:
         db_name = DATABASE_URL

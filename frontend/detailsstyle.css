@@ -418,7 +418,10 @@ body {
 
     transition: 0.2s;
 }
-
+.trailer-iframe {
+    display: none;
+    border: none;
+}
 
 .trailer-button:hover {
     background: rgba(0, 0, 0, 0.9);
