@@ -202,6 +202,9 @@
   width: 50px;
   height: 50px;
 }
+.profile-picture.hidden{
+    display: none;
+}
 .header-popup{
   background-color:#334155 ;
 }
@@ -214,9 +217,7 @@
 .register-text:hover{
   color: rgba(176, 172, 172, 0.712);
 }
-.profilepic{
-  border-radius: 12px;
-}
+
 .card{
   overflow: visible !important;
 }
@@ -249,4 +250,52 @@ body{
 }
 .heart-svg.active{
   fill: red;
+}
+
+/* 
+   WATCHLIST NOT LOGGED
+*/
+.watchlist-locked {
+  max-width: 420px;
+  margin: 4rem auto;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  backdrop-filter: blur(8px);
+}
+
+.locked-icon {
+  font-size: 2.75rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 12px rgba(34, 197, 94, 0.4));
+}
+
+.locked-title {
+  color: #f1f5f9;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.locked-text {
+  color: #94a3b8;
+  margin-bottom: 1.75rem;
+  line-height: 1.5;
+}
+
+.locked-btn {
+  display: inline-block;
+  padding: 0.6rem 1.75rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #22c55e, #10b981);
+  color: #0f172a;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.locked-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+  color: #0f172a;
 }

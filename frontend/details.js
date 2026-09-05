@@ -36,7 +36,58 @@ searchForm.addEventListener("submit", (e) => {
   }
   window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
 });
+const authLink = document.getElementById("authLink");
+const profileLink = document.querySelector(".profile-picture");
+async function updateNavBar() {
+  
+  try{
 
+  
+  const url = `${API_URL}/auth/me`;
+  const response = await fetch(url,{
+    credentials : "include"
+  })
+  if(response.ok){
+    authLink.textContent = "Log Out";
+
+    authLink.href = "#";
+    authLink.dataset.loggedIn = "true";
+    profileLink.classList.remove("hidden");
+  }
+  else{
+    authLink.textContent = "Sign in";
+
+    authLink.href = "index.html"
+    authLink.dataset.loggedIn = "false";
+    profileLink.classList.add("hidden");
+
+  }
+} catch(error){
+  console.error("Could not check authentication", error)
+}
+
+  
+};
+async function logout() {
+  
+  const url = `${API_URL}/auth/logout`
+  const response = await fetch(url,{
+    method : "POST",
+    credentials : "include"
+  });
+  if(response.ok){
+    authLink.dataset.loggedIn = "false";
+    await updateNavBar();
+  }
+  
+
+};
+authLink.addEventListener("click", (e) =>{
+  if(authLink.dataset.loggedIn == "true"){
+    e.preventDefault();
+    logout();
+  }
+});
 function displayMeta(data,mediaType){
     const meta = document.querySelector(".movie-meta");
 
@@ -249,3 +300,63 @@ function displayDetails(data,mediaType){
     detailsSection(data,mediaType);
     displayCredits(data,mediaType);
 };
+function updateWatchlistButton(value){
+    isOnWatchlist = value;
+    const button = document.getElementById("watchlist-button");
+    if(isOnWatchlist){
+        button.textContent = "✓ In Watchlist";
+        button.classList.add("in-watchlist");
+    }
+    else{
+        button.textContent = "＋ Add to Watchlist";
+        button.classList.remove("in-watchlist");
+
+    }
+
+};
+async function handleWatchlistClick(){
+
+    try{
+    if(isOnWatchlist){
+        const response = await fetch(`${API_URL}/watchlist/${currentTmdbId}?media_type=${currentMediaType}`,{
+        method : "DELETE",
+        credentials : "include"});
+        
+        if(!response.ok){
+            throw new Error("Failed to remove item from the watchlist");
+        }
+        updateWatchlistButton(false);
+    } else{
+        const itemData= {
+          tmdb_id : currentTmdbId ,
+          media_type : currentMediaType,
+          status : "want_to_watch",
+          rating : null
+        }
+        
+        const response = await fetch(`${API_URL}/watchlist`,{
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+          },
+        credentials : "include",
+        body : JSON.stringify(itemData)},);
+
+        if(!response.ok){
+            throw new Error("Failed to add item to the watchlist");
+        }
+
+        updateWatchlistButton(true);
+        
+        console.log("Updated");
+    }
+    }  catch (error) {
+
+        console.error(error);
+    }
+};
+document
+    .getElementById("watchlist-button")
+    .addEventListener("click",handleWatchlistClick);
+
+updateNavBar();

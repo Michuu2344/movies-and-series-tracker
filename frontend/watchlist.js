@@ -30,23 +30,9 @@ function showToast(message){
   toast.show()
 };
 
-async function logout() {
-  
-  const url = `${API_URL}/auth/logout`
-  const response = await fetch(url,{
-    method : "POST",
-    headers : {
-      credentials : "include"
-    }
-  });
-  if(response.ok){
-    window.location.href = "index.html";
-  }
-  
-  
-};
+const authLink = document.getElementById("authLink");
+const profileLink = document.querySelector(".profile-picture");
 async function updateNavBar() {
-  const authLink = document.getElementById("authLink");
   
   try{
 
@@ -57,19 +43,17 @@ async function updateNavBar() {
   })
   if(response.ok){
     authLink.textContent = "Log Out";
-    authLink.href = "#"
 
-    authLink.onclick = async (e) => {
-      e.preventDefault();
-      await logout();
-
-    };
-
-
+    authLink.href = "#";
+    authLink.dataset.loggedIn = "true";
+    profileLink.classList.remove("hidden");
   }
   else{
     authLink.textContent = "Sign in";
-    authLink.href = "index.html";
+
+    authLink.href = "index.html"
+    authLink.dataset.loggedIn = "false";
+    profileLink.classList.add("hidden");
 
   }
 } catch(error){
@@ -78,6 +62,26 @@ async function updateNavBar() {
 
   
 };
+async function logout() {
+  
+  const url = `${API_URL}/auth/logout`
+  const response = await fetch(url,{
+    method : "POST",
+    credentials : "include"
+  });
+  if(response.ok){
+    authLink.dataset.loggedIn = "false";
+    await updateNavBar();
+  }
+  
+
+};
+authLink.addEventListener("click", (e) =>{
+  if(authLink.dataset.loggedIn == "true"){
+    e.preventDefault();
+    logout();
+  }
+});
 async function toggleFavourite(tmdbId,mediaType,isFavourite) {
     try{
     const isFavouriteData = {
@@ -187,11 +191,18 @@ async function loadWatchlist() {
       credentials: "include",
     });
     if (response.status === 401) {
-      container.innerHTML = `<div class="alert alert-warning text-center">
-         You have to log in to view your watchlist
-        </div>`;
-      return;
-    }
+  container.innerHTML = `
+    <div class="watchlist-locked text-center">
+      <div class="locked-icon">🔒</div>
+      <h4 class="locked-title">Your watchlist is waiting</h4>
+      <p class="locked-text">
+        Log in to see the movies and series you've saved to watch.
+      </p>
+      <a href="index.html" class="locked-btn">Log In</a>
+    </div>
+  `;
+  return;
+}
     if (!response.ok) {
       throw new Error("Error loading the watchlist");
     }

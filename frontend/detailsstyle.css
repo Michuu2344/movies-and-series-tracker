@@ -72,6 +72,9 @@
 .register-text:hover{
   color: rgba(176, 172, 172, 0.712);
 }
+.profile-picture.hidden{
+    display: none;
+}
 /*
    GLOBAL
 */

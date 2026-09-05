@@ -40,8 +40,23 @@
 .nav-link.active {
     color: #ffffff !important;
 }
-
-
+.profilepic{
+  border-radius: 12px;
+  width: 50px;
+  height: 50px;
+}
+.profile-picture.hidden{
+    display: none;
+}
+.register-text{
+  color: white;
+  font-size: larger;
+  font-weight: bold;
+  font-family:'Segoe UI',sans-serif;
+}
+.register-text:hover{
+  color: rgba(176, 172, 172, 0.712);
+}
 /* 
    NAV SEARCH
 */

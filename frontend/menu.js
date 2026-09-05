@@ -18,6 +18,59 @@ searchForm.addEventListener("submit", (e)=>{
   window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
   
 });
+
+const authLink = document.getElementById("authLink");
+const profileLink = document.querySelector(".profile-picture");
+async function updateNavBar() {
+  
+  try{
+
+  
+  const url = `${API_URL}/auth/me`;
+  const response = await fetch(url,{
+    credentials : "include"
+  })
+  if(response.ok){
+    authLink.textContent = "Log Out";
+
+    authLink.href = "#";
+    authLink.dataset.loggedIn = "true";
+    profileLink.classList.remove("hidden");
+  }
+  else{
+    authLink.textContent = "Sign in";
+    authLink.href = "index.html";
+    authLink.dataset.loggedIn = "false";
+    profileLink.classList.add("hidden");
+
+  }
+} catch(error){
+  console.error("Could not check authentication", error)
+}
+
+  
+};
+async function logout() {
+  
+  const url = `${API_URL}/auth/logout`
+  const response = await fetch(url,{
+    method : "POST",
+    credentials : "include"
+  });
+  if(response.ok){
+    authLink.dataset.loggedIn = "false";
+    await updateNavBar();
+  }
+  
+
+};
+authLink.addEventListener("click", (e) =>{
+  
+  if(authLink.dataset.loggedIn == "true"){
+    e.preventDefault();
+    logout();
+  }
+});
 const homeSearch = document.getElementById("homeSearchForm");
 
 homeSearch.addEventListener("submit" , (e)=>{
@@ -79,7 +132,7 @@ try{
   
   const genresContainer = clone.querySelector((".modal-movie-genre"));
 
-  if(genresContainer && Array.isArray(data.genre)){
+  if(genresContainer && Array.isArray(data.genre)){ 
     genresContainer.innerHTML ="";
 
     data.genre.forEach(genre => {
@@ -135,7 +188,7 @@ async function displayPopularMovies(){
         const poster = clone.querySelector(".movie-poster");
         if(poster){
           poster.src = item.poster;
-        }l
+        }
         const movieCard = clone.querySelector(".movie-card");
         movieCard.onclick = () => redirectDetails(item.tmdb_id,item.media_type);
         container.appendChild(clone);
@@ -254,3 +307,4 @@ displayTrendingMovies();
 displayPopularMovies();
 displayPopularTvShows();
 displayTrendingTvShows();
+updateNavBar();

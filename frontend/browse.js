@@ -19,7 +19,60 @@ async function fetch_search_results(search_query, mediaTypeValue) {
     }
     return null;
   }
+};
+const authLink = document.getElementById("authLink");
+const profileLink = document.querySelector(".profile-picture");
+async function updateNavBar() {
+  
+  try{
+
+  
+  const url = `${API_URL}/auth/me`;
+  const response = await fetch(url,{
+    credentials : "include"
+  })
+  if(response.ok){
+    authLink.textContent = "Log Out";
+
+    authLink.href = "#";
+    authLink.dataset.loggedIn = "true";
+    profileLink.classList.remove("hidden");
+  }
+  else{
+    authLink.textContent = "Sign in";
+
+    authLink.href = "index.html"
+    authLink.dataset.loggedIn = "false";
+    profileLink.classList.add("hidden");
+
+  }
+} catch(error){
+  console.error("Could not check authentication", error)
 }
+
+  
+};
+async function logout() {
+  
+  const url = `${API_URL}/auth/logout`
+  const response = await fetch(url,{
+    method : "POST",
+    credentials : "include"
+  });
+  if(response.ok){
+    authLink.dataset.loggedIn = "false";
+    await updateNavBar();
+  }
+  
+
+};
+authLink.addEventListener("click", (e) =>{
+  if(authLink.dataset.loggedIn == "true"){
+    e.preventDefault();
+    logout();
+  }
+});
+
 function redirectDetails(tmdbId,mediaType){
   window.location.href = `details.html?tmdb_id=${encodeURIComponent(tmdbId)}&media_type=${mediaType}`;
 
@@ -211,7 +264,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     displayResults(data, mediaTypeParam || "movie");
   }
 });
-
+updateNavBar();
 const searchForm = document.getElementById("navSearchForm");
 searchForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -225,3 +278,5 @@ searchForm.addEventListener("submit", (e) => {
   }
   window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
 });
+
+
