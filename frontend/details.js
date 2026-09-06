@@ -88,6 +88,10 @@ authLink.addEventListener("click", (e) =>{
     logout();
   }
 });
+function redirectDetails(tmdbId,mediaType){
+  window.location.href = `details.html?tmdb_id=${encodeURIComponent(tmdbId)}&media_type=${mediaType}`;
+
+}
 function displayMeta(data,mediaType){
     const meta = document.querySelector(".movie-meta");
 
@@ -137,7 +141,7 @@ function detailsSection(data,mediaType){
         </div>
 
         <div class="info-item">
-            <span>Runtime</span>
+            <span>Runtime in minutes</span>
             <strong>${data.runtime}</strong>
         </div>
 
@@ -173,7 +177,6 @@ function detailsSection(data,mediaType){
     }
 
 }
-
 function displayCredits(data,mediaType){
     const stars = data.most_popular_cast_members;
     
@@ -234,6 +237,39 @@ function displayCredits(data,mediaType){
 
 };
 
+async function displayRecommendations(tmdb_id,media_type){
+    const container = document.getElementById("recommendationsContainer");
+    const template = document.getElementById("RecommendationsTemplate");
+
+    try{
+      const url = `${API_URL}/recommendations?tmdb_id=${tmdb_id}&media_type=${media_type}`;
+      const response = await fetch(url,{
+        method : "GET"
+      });
+
+      if(!response.ok){
+        console.log("Error displaying recommendations");
+        return;
+      }
+      const data = await response.json();
+      const recommendations = data.slice(0,5);
+      container.innerHTML = "";
+      recommendations.forEach(item => {
+        const clone = template.content.cloneNode(true);
+        
+        const poster = clone.querySelector(".movie-poster");
+        if(poster){
+          poster.src = item.poster;
+        }
+        const movieCard = clone.querySelector(".movie-card");
+        movieCard.onclick = () => redirectDetails(item.tmdb_id,item.media_type);
+        container.appendChild(clone);
+      });
+    }
+    catch(error){
+      console.log("Something went wrong",error);
+    }
+};
 
 
 
@@ -247,6 +283,8 @@ try{
     if(!response.ok){
         throw new Error("Failed to display details");
     }
+
+
     const data = await response.json();
     displayDetails(data,mediaType);
     if(data.trailer_key){
@@ -299,6 +337,7 @@ function displayDetails(data,mediaType){
 
     detailsSection(data,mediaType);
     displayCredits(data,mediaType);
+    displayRecommendations(data.tmdb_id,mediaType);
 };
 function updateWatchlistButton(value){
     isOnWatchlist = value;

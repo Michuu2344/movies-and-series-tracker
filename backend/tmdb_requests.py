@@ -228,9 +228,7 @@ def get_popular_movies():
         results.append({
             "tmdb_id" : item['id'],
             "media_type" : "movie",
-            "poster" : f"{poster_url}{item['poster_path']}"
-    
-                
+            "poster" : f"{poster_url}{item['poster_path']}"         
         })
     return results
 def get_trending_tv_shows():
@@ -270,6 +268,24 @@ def get_popular_tv_shows():
             "poster" : f"{poster_url}{item['poster_path']}"
     
                 
+        })
+    return results
+def get_recomendations(tmdb_id : int,media_type : str):
+    
+    url =f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}/recommendations?language=en-US&page=1"
+    headers = {
+            "accept" : "application/json",
+            "Authorization" : f"Bearer {API_KEY}"
+    }
+    data = requests.get(url,headers=headers)
+    results = []
+    response = data.json()
+    poster_url = f"https://image.tmdb.org/t/p/w500"
+    for item in response['results']:
+        results.append({
+            "tmdb_id" : item['id'],
+            "media_type" : f"{media_type}",
+            "poster" : f"{poster_url}{item['poster_path']}"         
         })
     return results
 

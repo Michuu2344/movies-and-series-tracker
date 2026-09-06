@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from backend.ratelimiting import RateLimiterStore
 from fastapi.security import OAuth2PasswordBearer,OAuth2PasswordRequestForm
 from backend.models import Mediatype,User, Status,UserRegister,WatchListItem,EditWatchListItem,FavouriteUpdate
-from backend.tmdb_requests import search_movie,search_tv,get_details_tv,get_details_movie,get_trending_movies,get_popular_movies,get_popular_tv_shows,get_trending_tv_shows
+from backend.tmdb_requests import search_movie,search_tv,get_details_tv,get_details_movie,get_trending_movies,get_popular_movies,get_popular_tv_shows,get_trending_tv_shows,get_recomendations
 from backend.database import create_user_db,create_watchlist,save_user_to_db,add_watchlist_item_db,edit_watchlist_item,display_watchlist_items,create_media_cache,display_favourite_items,delete_watchlist_item,check_user_exists,addItemFavourites,check_if_item_is_on_watchlist
 from backend.authentication import authenticate_user,Token,ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token,get_password_hash,get_current_user
 from backend.authentication import set_auth_cookie
@@ -164,3 +164,7 @@ async def display_trending_tv_shows():
 @app.get("/tv/popular")
 async def display_popular_tv_shows():
     return get_popular_tv_shows()
+
+@app.get("/recommendations")
+async def get_media_recommendations(tmdb_id : int,media_type : Mediatype = Mediatype.movie):
+    return get_recomendations(tmdb_id,media_type.value)
