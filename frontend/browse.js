@@ -251,17 +251,31 @@ async function displayResults(results, mediaTypeValue) {
     resultsdiv.append(clone);
   });
 };
-
-
 document.addEventListener("DOMContentLoaded", async () => {
   const urlParams = new URLSearchParams(window.location.search);
+  const browsePage = document.getElementById("browse-page");
+  const resultsDiv = document.getElementById("results");
+
 
   const queryParam = urlParams.get("query");
 
   const mediaTypeParam = urlParams.get("type");
   if (queryParam) {
+
+    if(browsePage){
+      browsePage.style.display = "none";
+      
+    }
+    if(resultsDiv){
+      resultsDiv.style.display = "";
+    }
+
     data = await fetch_search_results(queryParam, mediaTypeParam || "movie");
     displayResults(data, mediaTypeParam || "movie");
+  }
+  else {
+    resultsDiv.style.display = "none";
+    resultsDiv.innerHTML = "";
   }
 });
 updateNavBar();
@@ -278,5 +292,4 @@ searchForm.addEventListener("submit", (e) => {
   }
   window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
 });
-
 

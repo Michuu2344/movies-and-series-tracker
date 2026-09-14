@@ -11,7 +11,6 @@ from backend.tmdb_requests import search_movie,search_tv,get_details_tv,get_deta
 from backend.database import create_user_db,create_watchlist,save_user_to_db,add_watchlist_item_db,edit_watchlist_item,display_watchlist_items,create_media_cache,display_favourite_items,delete_watchlist_item,check_user_exists,addItemFavourites,check_if_item_is_on_watchlist
 from backend.authentication import authenticate_user,Token,ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token,get_password_hash,get_current_user
 from backend.authentication import set_auth_cookie
-
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -50,7 +49,6 @@ async def rate_limit_middleware(request : Request,call_next):
     response.headers["X-RateLimit-Remaining"] = str(bucket.get_remaining())
     response.headers["X-RateLimit-Reset"] = str(int(bucket.get_reset_time()))
     return response
-
 
 @app.get("/health")
 async def health():
@@ -149,6 +147,7 @@ async def updateFavourite(tmdb_id : int,user :Annotated[User,Depends(get_current
 @app.get("/watchlist/{tmdb_id}")
 async def is_item_on_watchlist(tmdb_id : int,user : Annotated[User,Depends(get_current_user)],media_type: Mediatype = Mediatype.movie) -> bool:
     return check_if_item_is_on_watchlist(tmdb_id,user.id,media_type)
+
 @app.get("/movies/trending")
 async def display_trending_movies():
     return get_trending_movies()

@@ -298,9 +298,12 @@ try{
     if (!watchlistResponse.ok){
         throw new Error("Failed to check watchlist")
     }
-
-    const watchlistStatus = await watchlistResponse.json();
-    updateWatchlistButton(watchlistStatus);
+    else if(watchlistResponse.status === 401) {
+        updateWatchlistButton({isLoggedOut : true});
+        return;
+    }
+    const inWatchlist = await watchlistResponse.json();
+    updateWatchlistButton({isLoggedOut : false, isOnWatchlist : inWatchlist});
    } 
    catch (error) {
             console.error("Watchlist check failed:", error);
@@ -339,10 +342,45 @@ function displayDetails(data,mediaType){
     displayCredits(data,mediaType);
     displayRecommendations(data.tmdb_id,mediaType);
 };
-function updateWatchlistButton(value){
-    isOnWatchlist = value;
+async function watchlist_button_init(){
+    try{
+        const response = await fetch(`${API_URL}/watchlist/${tmdb_id}`,{
+            method : "GET",
+            credentials : "include"
+        });
+        if(response.status === 401){
+            updateWatchlistButton({isLoggedOut : false, isOnWatchlist: false});
+        }
+        else if(!response.ok){
+            updateWatchlistButton({isLoggedOut : false, isOnWatchlist: false});
+        }
+        else{
+            updateWatchlistButton({isLoggedOut : false, isOnWatchlist: true});
+        }
+    }
+    catch (error){
+        console.log(error);
+    }
+};
+
+
+function updateWatchlistButton(state){
+    
     const button = document.getElementById("watchlist-button");
-    if(isOnWatchlist){
+    
+    
+    if(state.isLoggedOut){
+    button.textContent = "＋ Add to Watchlist";
+    button.onclick = () => {
+      alert("Musisz się zalogować, aby dodać ten element do watchlisty!");
+    };
+    return;
+    }
+    
+    isOnWatchlist = state.isOnWatchlist;
+
+    
+    if(state.isOnWatchlist){
         button.textContent = "✓ In Watchlist";
         button.classList.add("in-watchlist");
     }
@@ -364,7 +402,7 @@ async function handleWatchlistClick(){
         if(!response.ok){
             throw new Error("Failed to remove item from the watchlist");
         }
-        updateWatchlistButton(false);
+        updateWatchlistButton({isLoggedOut : false, isOnWatchlist: false});
     } else{
         const itemData= {
           tmdb_id : currentTmdbId ,
@@ -385,7 +423,7 @@ async function handleWatchlistClick(){
             throw new Error("Failed to add item to the watchlist");
         }
 
-        updateWatchlistButton(true);
+        updateWatchlistButton({isLoggedOut : false, isOnWatchlist : true});
         
         console.log("Updated");
     }
@@ -399,3 +437,10 @@ document
     .addEventListener("click",handleWatchlistClick);
 
 updateNavBar();
+watchlist_button_init();
+// trzeba pierw zrobic zeby byla ta sama nazwa wszedzie czyli isOnWatchlist a nastepnie zrobic funkcje watchlistbtn init ktora przekaze nam
+// jaki ma byc poczatkowy stan naszego przycisku
+
+
+
+//trzeba jakos zrobic zeby prawidlowo przekazywac

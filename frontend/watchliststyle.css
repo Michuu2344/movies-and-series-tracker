@@ -208,15 +208,8 @@
 .header-popup{
   background-color:#334155 ;
 }
-.register-text{
-  color: white;
-  font-size: larger;
-  font-weight: bold;
-  font-family:'Segoe UI',sans-serif;
-}
-.register-text:hover{
-  color: rgba(176, 172, 172, 0.712);
-}
+
+
 
 .card{
   overflow: visible !important;

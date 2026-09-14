@@ -247,7 +247,10 @@ async function loadWatchlist() {
       
       const statusButton= clone.querySelector(".status-button")
 
-      if(statusButton && item.status){
+      statusButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+      })
+      if(statusButton && item.status){  
         labels = {
           watching : "Watching",
           completed : "Completed",
@@ -259,9 +262,9 @@ async function loadWatchlist() {
         statusButton.dataset.currentStatus = item.status;
       }; 
       const mainRow = clone.querySelector(".card-row");
-      mainRow.onclick = () => redirectDetails(item.tmdb_id,item.media_type)
+      mainRow.onclick = () => redirectDetails(item.tmdb_id,item.media_type);
 
-      const statusLinks = clone.querySelectorAll(".status-item")
+      const statusLinks = clone.querySelectorAll(".status-item");
 
       statusLinks.forEach((link)=> {
 

@@ -48,15 +48,7 @@
 .profile-picture.hidden{
     display: none;
 }
-.register-text{
-  color: white;
-  font-size: larger;
-  font-weight: bold;
-  font-family:'Segoe UI',sans-serif;
-}
-.register-text:hover{
-  color: rgba(176, 172, 172, 0.712);
-}
+
 /* 
    NAV SEARCH
 */
@@ -167,4 +159,91 @@ body{
         linear-gradient(135deg,#0f172a,#111827);
 
     background-attachment:fixed;
+}
+
+/*
+    BODY WHEN NOT DISPLAYING RESULTS
+*/
+.browse-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  color: #f1f5f9;
+}
+
+.browse-header h2 {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.browse-header p {
+  color: #94a3b8;
+  margin-bottom: 1.5rem;
+}
+
+.browse-header::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin: 1.5rem 0 2rem;
+  background: linear-gradient(90deg, rgba(34,197,94,.3), transparent 70%);
+}
+
+.poster-section {
+  margin-bottom: 2.5rem;
+}
+
+.poster-section h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.section-sub {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+.poster-row {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scroll-snap-type: x mandatory;
+}
+
+.poster-row::-webkit-scrollbar {
+  height: 6px;
+}
+.poster-row::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.3);
+  border-radius: 3px;
+}
+
+.poster-card {
+  flex: 0 0 auto;
+  width: 150px;
+  aspect-ratio: 2 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(34, 197, 94, 0.15);
+  scroll-snap-align: start;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.poster-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+.poster-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
