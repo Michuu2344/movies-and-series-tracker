@@ -55,6 +55,25 @@ def create_user_db(db_name = None):
                 hashed_password TEXT)''')
     conn.commit()
     conn.close()
+def create_recently_viewed(db_name = None):
+    if db_name is None:
+        db_name = DATABASE_URL
+    conn = psycopg2.connect(db_name)
+    cur = conn.cursor()
+    sql_script = '''CREATE TABLE IF NOT EXISTS recently_viewed (
+    
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id),
+                tmdb_id INTEGER NOT NULL,
+                media_type VARCHAR(10) NOT NULL,
+                viewed_at TIMESTAMP NOT NULL DEFAULT NOW(),
+                UNIQUE (user_id,tmdb_id,media_type)
+                );
+                CREATE INDEX IF NOT EXISTS idx_recently_viewed_user_time 
+                ON recently_viewed (user_id, viewed_at DESC);'''
+    cur.execute(sql_script)
+    conn.commit()
+    conn.close()
 def format_media_row(row):
     year = row[3].split("-")[0] if row[3] else "N/A"
     return {"tmdb_id":row[0],
@@ -66,7 +85,10 @@ def format_media_row(row):
             "poster_url":f"https://image.tmdb.org/t/p/w500{row[6]}" if row[6] is not None else None,
             "is_favourite" : row[7]
             }
-    
+def format_recently_viewed_row(row):
+    return {"tmdb_id":row[0],
+            "media_type": row[1],
+            "title":row[2],}    
 def display_watchlist_items(user_id,db_name = None):
     if db_name is None:
         db_name = DATABASE_URL
@@ -90,6 +112,24 @@ def display_watchlist_items(user_id,db_name = None):
     conn.close()
     watchlist = [format_media_row(row) for row in rows]
     return watchlist
+
+def display_recently_viewed(user_id,limit : int = 10,db_name = None):
+    if db_name is None:
+        db_name = DATABASE_URL
+    conn = psycopg2.connect(db_name)
+    cur = conn.cursor()
+    try:
+        cur.execute('''SELECT tmdb_id, media_type, viewed_at 
+                    FROM recently_viewed 
+                    WHERE user_id = %s
+                    ORDER_BY viewed_at DESC
+                    LIMIT %s''',(user_id,limit))
+        rows = cur.fetchall()
+
+    finally:  
+        conn.close()
+
+
 def display_favourite_items(user_id,db_name = None):
     if db_name is None:
         db_name = DATABASE_URL
@@ -131,6 +171,19 @@ def check_if_item_is_on_watchlist(tmdb_id,user_id,media_type,db_name=None):
     conn = psycopg2.connect(db_name)
     cur = conn.cursor()
     cur.execute('''SELECT 1 from watchlist WHERE user_id = %s AND tmdb_id = %s AND media_type = %s''',(user_id,tmdb_id,media_type))
+
+    if cur.fetchone():
+        conn.close()
+        return True
+    else:
+        conn.close()
+        return False
+def check_if_item_is_favourite(tmdb_id,user_id,media_type,db_name=None):
+    if db_name is None:
+        db_name = DATABASE_URL
+    conn = psycopg2.connect(db_name)
+    cur = conn.cursor()
+    cur.execute('''SELECT 1 from watchlist WHERE is_favourite = %s AND user_id = %s AND tmdb_id = %s AND media_type = %s''',(True,user_id,tmdb_id,media_type))
 
     if cur.fetchone():
         conn.close()

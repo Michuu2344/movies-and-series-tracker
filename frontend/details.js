@@ -1,6 +1,7 @@
 let currentTmdbId = null;
 let currentMediaType = null;
 let isOnWatchlist = false;
+let isFavourite = false;
 const API_URL = "http://localhost:8000";
 
 
@@ -270,9 +271,6 @@ async function displayRecommendations(tmdb_id,media_type){
       console.log("Something went wrong",error);
     }
 };
-
-
-
 async function loadDetails(tmdbId,mediaType) {
     currentTmdbId = tmdbId;
     currentMediaType = mediaType;
@@ -283,7 +281,6 @@ try{
     if(!response.ok){
         throw new Error("Failed to display details");
     }
-
 
     const data = await response.json();
     displayDetails(data,mediaType);
@@ -344,12 +341,12 @@ function displayDetails(data,mediaType){
 };
 async function watchlist_button_init(){
     try{
-        const response = await fetch(`${API_URL}/watchlist/${tmdb_id}`,{
+        const response = await fetch(`${API_URL}/watchlist/${currentTmdbId}?media_type=${currentMediaType}`,{
             method : "GET",
             credentials : "include"
         });
         if(response.status === 401){
-            updateWatchlistButton({isLoggedOut : false, isOnWatchlist: false});
+            updateWatchlistButton({isLoggedOut : true, isOnWatchlist: false});
         }
         else if(!response.ok){
             updateWatchlistButton({isLoggedOut : false, isOnWatchlist: false});
@@ -432,15 +429,109 @@ async function handleWatchlistClick(){
         console.error(error);
     }
 };
+
+async function favourite_button_init(){
+    try{
+        const response = await fetch(`${API_URL}/watchlist/${currentTmdbId}/favourites?media_type=${currentMediaType}`,{
+            method : "GET",
+            credentials : "include"
+        });
+        if(response.status === 401){
+            updateFavouriteButton({isLoggedOut : true, isFavourite: false});
+        }
+        else if(!response.ok){
+            updateFavouriteButton({isLoggedOut : false, isFavourite: false});
+        }
+        else{
+            updateFavouriteButton({isLoggedOut : false, isFavourite: true});
+        }
+    }
+    catch (error){
+        console.log(error);
+    }
+};
+function updateFavouriteButton(state){
+    
+    const button = document.getElementById(".favourite-button");
+    
+    
+    if(state.isLoggedOut){
+    button.textContent = "♡ Favourite";
+    button.onclick = () => {
+      alert("You have to log in in order to add this item to favourites!");
+    };
+    return;
+    }
+    
+    isFavourite = state.isFavourite;
+
+    
+    if(state.isFavourite){
+
+        //red outline
+        button.classList.add("is_favourite");
+    }
+    else{
+        //grey outline
+        button.classList.remove("is_favourite");
+
+    }
+
+};
+async function handleFavouriteClick(){
+
+    try{
+    if(isFavourite){
+        const response = await fetch(`${API_URL}/watchlist/${currentTmdbId}/favourites?media_type=${currentMediaType}`,{
+        method : "PATCH",
+        credentials : "include",
+        headers : {
+            "Content-Type" : "application/json"
+          },
+        body : JSON.stringify({
+            is_favourite : false
+        })
+    });
+        
+        if(!response.ok){
+            throw new Error("Failed to remove item from favourites.");
+        }
+        updateFavouriteButton({isLoggedOut : false, isFavourite: false});
+    } else{      
+        const response = await fetch(`${API_URL}/watchlist/${currentTmdbId}/favourites?media_type=${currentMediaType}`,{
+        method : "PATCH",
+        credentials : "include",
+        headers : {
+            "Content-Type" : "application/json"
+          },
+        body : JSON.stringify({
+            is_favourite : true
+        })},);
+
+        if(!response.ok){
+            throw new Error("Failed to add item to favourites.");
+        }
+
+        updateFavouriteButton({isLoggedOut : false, isFavourite : true});
+        
+        console.log("Updated");
+    }
+    }  catch (error) {
+
+        console.error(error);
+    }
+};
+
 document
     .getElementById("watchlist-button")
     .addEventListener("click",handleWatchlistClick);
-
+document
+    .getElementById("favourite-button")
+    .addEventListener("click",handleFavouriteClick);
 updateNavBar();
 watchlist_button_init();
+favourite_button_init();
 // trzeba pierw zrobic zeby byla ta sama nazwa wszedzie czyli isOnWatchlist a nastepnie zrobic funkcje watchlistbtn init ktora przekaze nam
 // jaki ma byc poczatkowy stan naszego przycisku
-
-
-
+// 422 blad
 //trzeba jakos zrobic zeby prawidlowo przekazywac

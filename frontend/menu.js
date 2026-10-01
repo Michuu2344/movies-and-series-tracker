@@ -271,7 +271,7 @@ async function displayTrendingTvShows(){
     const template = document.getElementById("trendingTvTemplate");
 
     try{
-      const url = `${API_URL}/tv/popular`
+      const url = `${API_URL}/tv/trending`
       const response = await fetch(url);
 
       if(!response.ok){

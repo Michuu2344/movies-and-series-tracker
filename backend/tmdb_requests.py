@@ -40,9 +40,6 @@ def get_trailer_key(tmdb_id : int,media_type: str ="movie")-> str| None:
 
 
 
-
-
-
 def get_details_tv(tmdb_id : int):
     headers = {
         "accept": "application/json",

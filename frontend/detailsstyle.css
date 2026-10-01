@@ -63,15 +63,7 @@
 .header-popup{
   background-color:#334155 ;
 }
-.register-text{
-  color: white;
-  font-size: larger;
-  font-weight: bold;
-  font-family:'Segoe UI',sans-serif;
-}
-.register-text:hover{
-  color: rgba(176, 172, 172, 0.712);
-}
+
 .profile-picture.hidden{
     display: none;
 }
@@ -510,7 +502,13 @@ body {
 
     background: rgba(239, 68, 68, 0.08);
 }
+.favourite-button.is_favourite {
+    border-color: #c21111;
 
+    color:#c21111;
+
+    background: rgba(228, 58, 58, 0.08);
+}
 
 /* 
    GENRES
