@@ -1,5 +1,6 @@
 
 import psycopg2
+from psycopg2 import pool
 import os   
 from dotenv import load_dotenv
 from backend.tmdb_requests import get_details_movie,get_details_tv
@@ -7,17 +8,29 @@ from datetime import datetime
 from fastapi import HTTPException
 current_time = datetime.now().isoformat()
 from backend.models import EditWatchListItem
+from contextlib import contextmanager
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+db_pool = pool.ThreadedConnectionPool(minconn=1,maxconn=10,dsn=DATABASE_URL)
 
 
-def create_watchlist(db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''CREATE TABLE IF NOT EXISTS watchlist(
+@contextmanager
+def get_cursor():
+    conn = db_pool.getconn()
+    try:
+        with conn.cursor() as cur:
+            yield cur
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        db_pool.putconn(conn)
+
+def create_watchlist():
+    with get_cursor() as cur:      
+        cur.execute('''CREATE TABLE IF NOT EXISTS watchlist(
                 id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL REFERENCES users(id),
                 tmdb_id INTEGER NOT NULL,
@@ -26,41 +39,29 @@ def create_watchlist(db_name = None):
                 is_favourite BOOLEAN NOT NULL DEFAULT FALSE,
                 rating INTEGER,
                 added_at TIMESTAMP NOT NULL);''')
-    conn.commit()
-    conn.close()
-def create_media_cache(db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur =conn.cursor()
-    cur.execute('''CREATE TABLE IF NOT EXISTS media_cache(tmdb_id INTEGER,
+                
+def create_media_cache():
+    with get_cursor() as cur:
+        cur.execute('''CREATE TABLE IF NOT EXISTS media_cache(tmdb_id INTEGER,
                        media_type TEXT,
                        title TEXT,
                        release_date TEXT,
                        poster_path TEXT,
                        last_updated TIMESTAMP,
                        PRIMARY KEY(tmdb_id,media_type));''')
-    conn.commit()
-    conn.close()
-def create_user_db(db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''CREATE TABLE IF NOT EXISTS users (
+def create_user_db():
+    with get_cursor() as cur:
+        cur.execute('''CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
                 username TEXT,
                 email TEXT,
                 full_name TEXT,
                 hashed_password TEXT)''')
-    conn.commit()
-    conn.close()
-def create_recently_viewed(db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    sql_script = '''CREATE TABLE IF NOT EXISTS recently_viewed (
+
+#lepszym rozwiazaniem bedzie redis i przechowywanie tych danych w pamieci podrecznej
+def create_recently_viewed():
+    with get_cursor as cur:
+        sql_script = '''CREATE TABLE IF NOT EXISTS recently_viewed (
     
                 id SERIAL PRIMARY KEY,
                 user_id INTEGER NOT NULL REFERENCES users(id),
@@ -71,9 +72,13 @@ def create_recently_viewed(db_name = None):
                 );
                 CREATE INDEX IF NOT EXISTS idx_recently_viewed_user_time 
                 ON recently_viewed (user_id, viewed_at DESC);'''
-    cur.execute(sql_script)
-    conn.commit()
-    conn.close()
+        cur.execute(sql_script) 
+
+def add_to_recently_viewed():
+    with get_cursor() as cur:
+        sql_script = '''INSERT INTO recently_viewed (user_id,tmdb_id,media_type,viewed_at) VALUES (%s,%s,%s,%s);'''
+        cur.execute(sql_script)
+
 def format_media_row(row):
     year = row[3].split("-")[0] if row[3] else "N/A"
     return {"tmdb_id":row[0],
@@ -85,16 +90,15 @@ def format_media_row(row):
             "poster_url":f"https://image.tmdb.org/t/p/w500{row[6]}" if row[6] is not None else None,
             "is_favourite" : row[7]
             }
+
 def format_recently_viewed_row(row):
     return {"tmdb_id":row[0],
             "media_type": row[1],
             "title":row[2],}    
-def display_watchlist_items(user_id,db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''SELECT 
+
+def display_watchlist_items(user_id):
+    with get_cursor() as cur:
+        cur.execute('''SELECT 
                 w.tmdb_id,
                 w.media_type,
                 m.title,
@@ -107,35 +111,16 @@ def display_watchlist_items(user_id,db_name = None):
                 LEFT JOIN media_cache m
                     ON w.tmdb_id = m.tmdb_id
                     AND w.media_type = m.media_type
-                WHERE user_id = %s''',(user_id,))   
-    rows = cur.fetchall()
-    conn.close()
-    watchlist = [format_media_row(row) for row in rows]
-    return watchlist
-
-def display_recently_viewed(user_id,limit : int = 10,db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    try:
-        cur.execute('''SELECT tmdb_id, media_type, viewed_at 
-                    FROM recently_viewed 
-                    WHERE user_id = %s
-                    ORDER_BY viewed_at DESC
-                    LIMIT %s''',(user_id,limit))
+                WHERE w.user_id = %s''',(user_id,))   
         rows = cur.fetchall()
+        watchlist = [format_media_row(row) for row in rows]
+        return watchlist
 
-    finally:  
-        conn.close()
 
 
-def display_favourite_items(user_id,db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''SELECT
+def display_favourite_items(user_id):
+    with get_cursor() as cur:
+        cur.execute('''SELECT
                 w.tmdb_id,
                 m.title,
                 m.release_date,
@@ -146,110 +131,85 @@ def display_favourite_items(user_id,db_name = None):
                 LEFT JOIN media_cache m 
                     ON w.tmdb_id = m.tmdb_id 
                     AND w.media_type = m.media_type
-                WHERE user_id = %s AND w.status = %s''',(user_id,"favourite",))
-    rows = cur.fetchall()
-    conn.close()
-    favourites = [format_media_row(row) for row in rows]
-    return favourites
-def check_watchlist_item(item,user,db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''SELECT 1 from watchlist WHERE tmdb_id = %s AND media_type = %s AND user_id = %s''',
+                WHERE user_id = %s AND w.is_favourite = %s''',(user_id,True,))
+        rows = cur.fetchall()
+    
+        favourites = [format_media_row(row) for row in rows]
+        return favourites
+
+def check_watchlist_item(item,user):
+    with get_cursor() as cur:
+        cur.execute('''SELECT 1 from watchlist WHERE tmdb_id = %s AND media_type = %s AND user_id = %s''',
                 (item.tmdb_id,item.media_type.value,user.id))
     
-    if cur.fetchone():
-        conn.close()
-        return True
-    else:
-        conn.close()
-        return False
-def check_if_item_is_on_watchlist(tmdb_id,user_id,media_type,db_name=None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''SELECT 1 from watchlist WHERE user_id = %s AND tmdb_id = %s AND media_type = %s''',(user_id,tmdb_id,media_type))
+        if cur.fetchone():
+            return True
+        else:
+            return False
+        
+def check_if_item_is_on_watchlist(tmdb_id,user_id,media_type):
+    with get_cursor() as cur:
+        cur.execute('''SELECT 1 from watchlist WHERE user_id = %s AND tmdb_id = %s AND media_type = %s''',(user_id,tmdb_id,media_type))
+        if cur.fetchone():
+            return True
+        else:
+            return False
+  
+def check_if_item_is_favourite(tmdb_id,user_id,media_type):
+    with get_cursor() as cur:
+        cur.execute('''SELECT 1 from watchlist WHERE is_favourite = %s AND user_id = %s AND tmdb_id = %s AND media_type = %s''',(True,user_id,tmdb_id,media_type))
 
-    if cur.fetchone():
-        conn.close()
-        return True
-    else:
-        conn.close()
-        return False
-def check_if_item_is_favourite(tmdb_id,user_id,media_type,db_name=None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''SELECT 1 from watchlist WHERE is_favourite = %s AND user_id = %s AND tmdb_id = %s AND media_type = %s''',(True,user_id,tmdb_id,media_type))
+        if cur.fetchone():
+            return True
+        else:
+            return False
 
-    if cur.fetchone():
-        conn.close()
-        return True
-    else:
-        conn.close()
-        return False
-def add_watchlist_item_db(item,user,db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
+def add_watchlist_item_db(item,user):
+    
     if check_watchlist_item(item,user) == True:
         raise HTTPException(status_code=409,detail="This item is already on your watchlist")
+    media_type =  item.media_type.value    
+
+    with get_cursor() as cur:
+        cur.execute('''SELECT 1 FROM media_cache WHERE tmdb_id = %s AND media_type = %s''',(item.tmdb_id,media_type,))
+        cached = cur.fetchone() is not None
         
-    
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''SELECT 1 FROM media_cache WHERE tmdb_id = %s AND media_type = %s''',(item.tmdb_id,item.media_type.value,))
-    if not cur.fetchone():
-        if item.media_type.value == "movie":
+    data = None
+    if not cached:
+        if(media_type == "movie"):
             data = get_details_movie(item.tmdb_id)
-            cur.execute('''INSERT INTO media_cache 
-                        (tmdb_id,
-                        media_type,
-                        title,
-                        release_date,
-                        poster_path, last_updated) 
-                        VALUES (%s,%s,%s,%s,%s,%s) ''',
-                        (item.tmdb_id,item.media_type.value,
-                         data['name'],
-                         data['release_date'],
-                         data['poster'],
-                         current_time,
-                         ))
         else:
             data = get_details_tv(item.tmdb_id)
+    with get_cursor() as cur:
+        if data:
             cur.execute('''INSERT INTO media_cache 
-                        (tmdb_id,
-                        media_type,
-                        title,
-                        release_date,
-                        poster_path, last_updated) 
-                        VALUES (%s,%s,%s,%s,%s,%s) ''',
-                        (item.tmdb_id,item.media_type.value,
-                         data['name'],
-                         data['release_date'],
-                         data['poster'],
-                         current_time,
-                         ))
-    
+                                    (tmdb_id,
+                                    media_type,
+                                    title,
+                                    release_date,
+                                    poster_path, last_updated) 
+                                    VALUES (%s,%s,%s,%s,%s,%s)
+                                    ON CONFLICT (tmdb_id,media_type) DO NOTHING ''',
+                                    (item.tmdb_id,media_type,
+                                     data['name'],
+                                     data['release_date'],
+                                     data['poster'],
+                                     current_time,
+                                     ))   
 
-    cur.execute('''INSERT INTO watchlist (user_id,
+        cur.execute('''INSERT INTO watchlist (user_id,
                 tmdb_id,
                 media_type, 
                 status,
                 rating,
                 is_favourite,
                 added_at) VALUES (%s,%s,%s,%s,%s,%s,%s)''',
-                (user.id,item.tmdb_id,item.media_type.value,item.status.value,item.rating,item.is_favourite,current_time,))
-    conn.commit()
-    conn.close()
+                (user.id,item.tmdb_id,media_type,item.status.value,item.rating,item.is_favourite,current_time,))
+        
     return {"message":f"Successfully added to watchlist item with tmdb_id of: {item.tmdb_id}"}
-def edit_watchlist_item(id : int,user_id : int,edited_item : EditWatchListItem,media_type : str,db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
+
+def edit_watchlist_item(id : int,user_id : int,edited_item : EditWatchListItem,media_type : str):
+    
     fields = []
     values = []
     if edited_item.status is not None:
@@ -264,78 +224,50 @@ def edit_watchlist_item(id : int,user_id : int,edited_item : EditWatchListItem,m
     values.append(user_id)
     values.append(media_type)
     sql = f"UPDATE watchlist SET {' ,'.join(fields)} WHERE tmdb_id = %s AND user_id = %s AND media_type = %s"
-    cur.execute(sql,tuple(values))
-    conn.commit()
-    conn.close()
+    with get_cursor() as cur:   
+        cur.execute(sql,tuple(values))
+
+    
     return {"status":"success"}
-def get_user_from_db(username,db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''SELECT * FROM users WHERE username =%s''',(username,))
-    try:
+def get_user_from_db(username):
+    with get_cursor() as cur:  
+        cur.execute('''SELECT * FROM users WHERE username =%s''',(username,))
+
         result = cur.fetchone()
         
-        if result is None:
-            return None
+    if result is None:
+        return None
         
-        return {
-            "id":result[0],
-            "username":result[1],
-            "email":result[2],
-            "full_name":result[3],
-            "hashed_password":result[4]
+    return {
+        "id":result[0],
+        "username":result[1],
+        "email":result[2],
+        "full_name":result[3],
+        "hashed_password":result[4]
 
         }
-    
-    finally:    
-        conn.close()
-def save_user_to_db(new_user,hashed,db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''INSERT INTO users (username,email,full_name,hashed_password) VALUES (%s,%s,%s,%s)''',
+def save_user_to_db(new_user,hashed):
+    with get_cursor() as cur:
+        cur.execute('''INSERT INTO users (username,email,full_name,hashed_password) VALUES (%s,%s,%s,%s)''',
                 (new_user.username,new_user.email,new_user.full_name,hashed,))
-    conn.commit()
-    conn.close()
-def delete_watchlist_item(id,user_id,media_type,db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''DELETE FROM watchlist WHERE tmdb_id = %s AND user_id = %s AND media_type =%s''',(id,user_id,media_type,))
-    rows = cur.rowcount
-    conn.commit()
-    conn.close()
-    if rows == 0:
-        raise HTTPException(status_code=404,detail=f"No item found with tmdb_id of {id}")
+        
+def delete_watchlist_item(id,user_id,media_type):
+    with get_cursor() as cur:
+        cur.execute('''DELETE FROM watchlist WHERE tmdb_id = %s AND user_id = %s AND media_type =%s''',(id,user_id,media_type,))
+        deleted = cur.rowcount
+        if deleted == 0:
+            raise HTTPException(status_code=404,detail=f"No item found with tmdb_id of {id}")
+        
     return {"message":f"Succesfully deleted a {media_type} item with tmdb_id of {id}"}
 
-def check_user_exists(username : str,db_name = None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    cur.execute('''SELECT 1 FROM users WHERE username = %s''',(username,))
-    try:
+def check_user_exists(username : str):
+    with get_cursor() as cur:
+        cur.execute('''SELECT 1 FROM users WHERE username = %s''',(username,))
         result = cur.fetchone()
-        if result is not None:
-            return True
-        else:
-            return False
-    finally:
-        conn.close()
-def addItemFavourites(tmdb_id : int, user_id : int,media_type : str,isFavourite : bool,db_name =None):
-    if db_name is None:
-        db_name = DATABASE_URL
-    conn = psycopg2.connect(db_name)
-    cur = conn.cursor()
-    try:
+        return result is not None
+        
+def addItemFavourites(tmdb_id : int, user_id : int,media_type : str,isFavourite : bool):
+    with get_cursor() as cur:
         cur.execute('''UPDATE watchlist SET is_favourite = %s WHERE user_id = %s AND tmdb_id = %s AND media_type = %s''',
-                    (isFavourite,user_id,tmdb_id,media_type,))
-        conn.commit()
-    finally:
-        cur.close()
-        conn.close()
+                (isFavourite,user_id,tmdb_id,media_type,))
+

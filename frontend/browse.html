@@ -206,14 +206,24 @@
     <template id="poster-items-row">
       <h3>🕘 Recently Viewed</h3>
     <div class="poster-row">
-      <div class="poster-card"><img src="..." alt=""></div>
-      <div class="poster-card"><img src="..." alt=""></div>
-      <div class="poster-card"><img src="..." alt=""></div>
-      <div class="poster-card"><img src="..." alt=""></div>
-      <div class="poster-card"><img src="..." alt=""></div>
+      <div class="poster-card"><img src="..." class="movie-poster" alt=""></div>
+      <div class="poster-card"><img src="..." alt="" class="movie-poster" alt=""></div>
+      <div class="poster-card"><img src="..." alt="" class="movie-poster" alt=""></div>
+      <div class="poster-card"><img src="..." alt="" class="movie-poster" alt=""></div>
+      <div class="poster-card"><img src="..." alt="" class="movie-poster" alt=""></div>
     </div>
     </template>
-
+    <template id="trendingMoviesTemplate">
+<div class="col movie-column">
+            <div class="movie-card h-100">
+                <img
+              class="img-fluid movie-poster"
+              alt="posterPicture"
+              style="min-height: 180px"
+            />
+</div>
+</div>    
+</template>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
     <script src="browse.js"></script>
 </body>

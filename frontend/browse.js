@@ -292,4 +292,93 @@ searchForm.addEventListener("submit", (e) => {
   }
   window.location.href = `browse.html?query=${encodeURIComponent(query)}&type=${mediatype}`;
 });
+function displayBrowseDefault(data){
+
+        lastItems = data.slice(0,5);
+        lastItems.forEach(item => {
+        const clone = template.content.cloneNode(true);
+        const poster = clone.querySelector(".movie-poster");
+        if(poster){
+          poster.src = item.poster;
+        }
+        const tvCard = clone.querySelector(".poster-card");
+
+        tvCard.onclick = () => redirectDetails(item.tmdb_id,item.media_type);
+        container.appendChild(clone);
+      });
+};
+async function loadDetails(tmdbId,mediaType) {
+    currentTmdbId = tmdbId;
+    currentMediaType = mediaType;
+try{
+    const response = await fetch(`${API_URL}/recently-viewed`,{
+      method : "GET",
+      credentials : "include"
+    }
+    );
+    if(!response.ok){
+        throw new Error("Failed to display details");
+    }
+
+    const data = await response.json();
+    displayDetails(data,mediaType);
+    if(data.trailer_key){
+        openTrailerVideo(data.trailer_key);
+    }
+    try{
+    const watchlistResponse = await fetch(`${API_URL}/watchlist/${tmdbId}?media_type=${mediaType}`,{
+        method : "GET",
+        credentials : "include"
+    });
+    if (!watchlistResponse.ok){
+        throw new Error("Failed to check watchlist")
+    }
+    else if(watchlistResponse.status === 401) {
+        updateWatchlistButton({isLoggedOut : true});
+        return;
+    }
+    const inWatchlist = await watchlistResponse.json();
+    updateWatchlistButton({isLoggedOut : false, isOnWatchlist : inWatchlist});
+   } 
+   catch (error) {
+            console.error("Watchlist check failed:", error);
+        }
+}
+   catch(error){
+    console.error(error)
+   }
+};
+async function displayRecentlyViewed(){
+      const container = document.querySelector(".poster-section");
+      const template = document.getElementById("poster-items-row");
+    try{
+      const url = `${API_URL}/recently-viewed`
+      const response = await fetch(url,{
+        method : "GET",
+        credentials : "include"
+    });;
+
+      if(!response.ok){
+        console.log("Error displaying recently viewed items");
+        return;
+      }
+      const data = await response.json();
+      const mostRecent = data.slice(0,5);
+      container.innerHTML = "";
+      mostRecent.forEach(item => {
+        const clone = template.content.cloneNode(true);
+        
+        const poster = clone.querySelector(".movie-poster");
+        if(poster){
+          poster.src = item.poster;
+        }
+        const tvCard = clone.querySelector(".poster-card");
+        tvCard.onclick = () => redirectDetails(item.tmdb_id,item.media_type);
+        container.appendChild(clone);
+      });
+    }
+    catch(error){
+      console.log("Something went wrong",error)
+    }
+};
 

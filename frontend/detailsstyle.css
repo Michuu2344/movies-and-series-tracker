@@ -493,23 +493,26 @@ body {
 
     transition: 0.2s;
 }
-
-
-.favourite-button:hover {
-    border-color: #ef4444;
-
-    color: #ef4444;
-
-    background: rgba(239, 68, 68, 0.08);
-}
-.favourite-button.is_favourite {
+.favourite-button.is_favourite{
     border-color: #c21111;
 
     color:#c21111;
 
     background: rgba(228, 58, 58, 0.08);
 }
+.favourite-button:hover {
+    border-color: #ef4444;
 
+    color: #ef4444;
+
+    background: rgba(239, 68, 68, 0.08);
+    transform: translateY(-2px);
+}
+
+.favourite-button.is_favourite:hover {
+    border-color: #991b1b;
+    background: rgba(239, 68, 68, 0.15);
+}
 /* 
    GENRES
  */

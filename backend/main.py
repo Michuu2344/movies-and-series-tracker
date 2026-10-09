@@ -120,10 +120,6 @@ async def get_details(tmdb_id : int, media_type: Mediatype = Mediatype.movie):
 async def get_my_information(user: Annotated[User,Depends(get_current_user)]):
     return {"{user.username} - {user.full_name}"}
 
-@app.get("/favourites")   
-async def display_favourites(user: Annotated[User,Depends(get_current_user)]):
-    return display_favourite_items(user.id)
-
 @app.get("/watchlist")
 async def display_watchlist(user : Annotated[User,Depends(get_current_user)]):
     return display_watchlist_items(user.id)
