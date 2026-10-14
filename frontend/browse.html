@@ -119,54 +119,38 @@
 
 
 
-    <template id="movieCardTemplate">
-      <div
-        class="card mb-4 shadow-sm mx-auto overflow-hidden"
-        style="max-width: 750px; border-radius: 15px; cursor: pointer"
-      >
-        <div class="row g-0 h-100 card-row">
-          <div class="col-3">
-            <img
-              class="img-fluid h-100 object-fit-cover movie-poster"
-              alt="thumbnail"
-              style="min-height: 180px"
-            />
-          </div>
+<template id="movieCardTemplate">
+  <article class="movie-row">
+    <img class="movie-poster" alt="plakat" loading="lazy" />
 
-          <div class="col-9 d-flex flex-column justify-content-between p-3">
-            <div>
-              <h2 class="h4 mb-2 fw-bold movie-title">Tytuł</h2>
-
-              <div class="d-flex align-items-center gap-3 mb-3">
-                <h3 class="h6 text-muted m-0 movie-date">Data</h3>
-
-                <span class="badge movie-badge">Typ</span>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mt-2">
-              <div class="d-flex align-items-center gap-2">
-                <img
-                  src="https://t3.ftcdn.net/jpg/01/21/64/88/360_F_121648819_ZQ0tZ6tjLzxim1SG7CQ86raBw4sglCzB.jpg"
-                  style="width: 30px; height: 30px; object-fit: contain"
-                  alt="rating"
-                />
-
-                <p class="m-0 fw-bold fs-5 movie-rating">0.0</p>
-              </div>
-
-              <button
-                class="btn btn-primary d-flex align-items-center justify-content-center fw-bold fs-4 watchlist-btn"
-                style="width: 45px; height: 45px; border-radius: 10px"
-              >
-                +
-              </button>
-            </div>
-          </div>
-        </div>
+    <div class="movie-main">
+      <h2 class="movie-title">Tytuł</h2>
+      <div class="movie-meta">
+        <span class="movie-date">Rok</span>
+        <span class="movie-dot">•</span>
+        <span class="movie-badge">Typ</span>
       </div>
-    </template>
+    </div>
 
+    <div class="movie-rating-box">
+      <span class="star">★</span>
+      <span class="movie-rating">0.0</span>
+    </div>
+
+    <button class="watchlist-btn" title="Dodaj do watchlisty" aria-label="Dodaj do watchlisty">
+      <svg class="icon-plus" viewBox="0 0 24 24" width="20" height="20" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      <svg class="icon-check" viewBox="0 0 24 24" width="20" height="20" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 13l4 4L19 7" />
+      </svg>
+    </button>
+  </article>
+</template>
+
+  
     <template id="modalContentTemplate">
       <div class="modal-header">
         <h5 class="modal-title fw-bold modal-movie-title">Tytuł</h5>
@@ -213,6 +197,7 @@
       <div class="poster-card"><img src="..." alt="" class="movie-poster" alt=""></div>
     </div>
     </template>
+
     <template id="trendingMoviesTemplate">
 <div class="col movie-column">
             <div class="movie-card h-100">

@@ -116,8 +116,15 @@ def display_watchlist_items(user_id):
         watchlist = [format_media_row(row) for row in rows]
         return watchlist
 
-
-
+def display_recently_viewed(user_id,limit : int = 10):
+    with get_cursor() as cur:  
+        cur.execute('''SELECT tmdb_id, media_type, viewed_at 
+                    FROM recently_viewed 
+                    WHERE user_id = %s
+                    ORDER BY viewed_at DESC
+                    LIMIT %s''',(user_id,limit))
+        rows = cur.fetchall()
+        
 def display_favourite_items(user_id):
     with get_cursor() as cur:
         cur.execute('''SELECT
@@ -136,6 +143,7 @@ def display_favourite_items(user_id):
     
         favourites = [format_media_row(row) for row in rows]
         return favourites
+
 
 def check_watchlist_item(item,user):
     with get_cursor() as cur:

@@ -24,6 +24,7 @@ const authLink = document.getElementById("authLink");
 const profileLink = document.querySelector(".profile-picture");
 async function updateNavBar() {
   
+
   try{
 
   
@@ -77,104 +78,7 @@ function redirectDetails(tmdbId,mediaType){
   window.location.href = `details.html?tmdb_id=${encodeURIComponent(tmdbId)}&media_type=${mediaType}`;
 
 }
-async function showDetails(tmdbId, mediaType) {
-  try {
-    const response = await fetch(
-      `${API_URL}/media/${tmdbId}?media_type=${mediaType}`,
-      {
-        method: "GET",
-      },
-    );
-    if (!response.ok) throw new Error("Failed to fetch details");
 
-    const data = await response.json();
-    const modalContent = document.getElementById("modalContent");
-    modalContent.replaceChildren();
-
-    const template = document.getElementById("modalContentTemplate");
-
-    const clone = template.content.cloneNode(true);
-
-    const titleEl = clone.querySelector(".modal-movie-title");
-    if (titleEl) titleEl.textContent = data.name;
-
-    const posterEl = clone.querySelector(".modal-movie-poster");
-    if (posterEl)
-      posterEl.src = data.poster || "https://via.placeholder.com/200x300";
-
-    const ratingEl = clone.querySelector(".modal-movie-rating");
-    if (ratingEl) ratingEl.textContent = `⭐ Rating: ${data.rating || "0.0"}`;
-
-    const release_dateEl = clone.querySelector(".modal-movie-date");
-    if (release_dateEl) release_dateEl.textContent = data.release_date;
-
-    const overviewEl = clone.querySelector(".modal-movie-overview");
-    if (overviewEl) overviewEl.textContent = data.overview;
-
-    const genresContainer = clone.querySelector(".modal-movie-genre");
-
-    if (genresContainer && Array.isArray(data.genre)) {
-      genresContainer.innerHTML = "";
-
-      data.genre.forEach((genre) => {
-        const genreTag = document.createElement("span");
-        genreTag.classList.add(
-          "badge",
-          "bg-primary",
-          "text-dark",
-          "fs-6",
-          "gap-3",
-        );
-        genreTag.textContent = genre.name;
-
-        genresContainer.appendChild(genreTag);
-      });
-    }
-
-    const watchlistBtn = clone.querySelector(".modal-movie-btn");
-    if (watchlistBtn) {
-      watchlistBtn.onclick = async (e) => {
-        e.preventDefault();
-        
-        const itemData= {
-          tmdb_id : tmdbId ,
-          media_type : mediaTypeValue,
-          status : "want_to_watch",
-          rating : null
-        }
-        const response = await fetch(`${API_URL}/watchlist`,{
-          method : "POST",
-          headers : {
-            "Content-Type" : "application/json"
-          },
-          credentials : "include",
-          body : JSON.stringify(itemData)
-        });
-        if(response.ok){
-          btn.textContent = "✓ Added an item to watchlist";
-          btn.classList.remove("btn-warning");
-          btn.classList.add("btn-success");
-          btn.disabled = true;
-        }
-        else if(response.status === 401){
-          alert("You have to log in if you want to add an item to your watchlist");
-        }
-        else{
-          alert("Could not add an item to your watchlist");
-        }
-      };
-    };
-    modalContent.appendChild(clone);
-
-    const myModal = new bootstrap.Modal(
-      document.getElementById("detailsModal"),
-    );
-
-    myModal.show();
-  } catch (error) {
-    console.error("Error fetching details", error);
-  }
-}
 async function displayResults(results, mediaTypeValue) {
   const resultsdiv = document.getElementById("results");
   resultsdiv.innerHTML = "";
@@ -195,19 +99,14 @@ async function displayResults(results, mediaTypeValue) {
   cleanResults.forEach((item) => {
     const clone = template.content.cloneNode(true);
     clone.querySelector(".movie-title").textContent = item.name;
-    clone.querySelector(".movie-date").textContent = item.release_date;
+    clone.querySelector(".movie-date").textContent = 
+      item.release_date ? item.release_date.slice(0,4) : "—";
     clone.querySelector(".movie-poster").src = item.poster;
-    clone.querySelector(".movie-rating").textContent = item.rating;
+    clone.querySelector(".movie-rating").textContent = Number(item.rating).toFixed(1);
 
     const badge = clone.querySelector(".movie-badge");
-    badge.textContent =
-      mediaTypeValue === "movie" ? "🎬 Movie" : "📺 TV Series";
-    badge.classList.add(
-      mediaTypeValue === "movie" ? "bg-primary" : "bg-success",
-    );
-
-    const mainRow = clone.querySelector(".card-row");
-    mainRow.onclick = () => redirectDetails(item.tmdb_id,mediaTypeValue);
+    badge.textContent = mediaTypeValue === "movie" ? "Movie" : "TV Series";
+    clone.querySelector(".movie-row").onclick = () => redirectDetails(item.tmdb_id,mediaTypeValue);
       
 
     const btn = clone.querySelector(".watchlist-btn");
@@ -231,9 +130,7 @@ async function displayResults(results, mediaTypeValue) {
         body : JSON.stringify(itemData)
       });
       if(response.ok){
-        btn.textContent = "✓";
-        btn.classList.remove("btn-primary");
-        btn.classList.add("btn-success");
+        btn.classList.add("added")
         btn.disabled = true;
       }
       else if(response.status === 401){
@@ -250,7 +147,7 @@ async function displayResults(results, mediaTypeValue) {
   };
     resultsdiv.append(clone);
   });
-};
+};  
 document.addEventListener("DOMContentLoaded", async () => {
   const urlParams = new URLSearchParams(window.location.search);
   const browsePage = document.getElementById("browse-page");

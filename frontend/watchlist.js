@@ -223,7 +223,7 @@ async function loadWatchlist() {
         poster.src = item.poster_url
           ? item.poster_url
           : "https://via.placeholder.com/150x225?text=Brak+Plakatu";
-        poster.alt = item.name;
+        poster.alt = item.title;
       }
 
       const name = clone.querySelector(".movie-title");
@@ -232,7 +232,7 @@ async function loadWatchlist() {
       }
       const release_date = clone.querySelector(".movie-date");
       if (release_date) {
-        release_date.textContent = item.release_date;
+        release_date.textContent = item.release_date ? item.release_date.slice(0,4) :  "—";
       }
 
       const badge = clone.querySelector(".movie-badge");
@@ -242,14 +242,11 @@ async function loadWatchlist() {
       }
       const rating = clone.querySelector(".movie-rating");
       if (rating) {
-        rating.textContent = item.rating;
+        rating.textContent = Number(item.rating).toFixed(1);
       }
       
-      const statusButton= clone.querySelector(".status-button")
-
-      statusButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-      })
+      const statusButton= clone.querySelector(".status-button");
+    
       if(statusButton && item.status){  
         labels = {
           watching : "Watching",
@@ -262,15 +259,16 @@ async function loadWatchlist() {
         statusButton.dataset.currentStatus = item.status;
       }; 
       const mainRow = clone.querySelector(".card-row");
-      mainRow.onclick = () => redirectDetails(item.tmdb_id,item.media_type);
-
+      mainRow.onclick = (e) => {
+        if(e.target.closest(".dropdown,button, a")) return;
+        redirectDetails(item.tmdb_id,item.media_type);
+        }
       const statusLinks = clone.querySelectorAll(".status-item");
 
       statusLinks.forEach((link)=> {
 
         link.addEventListener("click", async (e) => {
           e.preventDefault();
-          e.stopPropagation();
 
           const newStatus = link.dataset.status;
           const newStatusText = link.textContent.trim();
